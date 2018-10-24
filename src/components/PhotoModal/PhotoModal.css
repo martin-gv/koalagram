@@ -1,0 +1,93 @@
+.PhotoModal .modal-container {
+  width: 95%;
+  max-width: 900px;
+  background-color: #fff;
+  display: flex;
+  box-shadow: 0 5px 15px 0 rgba(0, 0, 0, 0.2);
+}
+
+.PhotoModal .photo {
+  float: left;
+  position: relative;
+  width: 65%;
+  padding-bottom: 65%;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.PhotoModal .sidebar {
+  float: left;
+  width: 34.999%;
+  padding: 2em;
+  display: flex;
+  flex-direction: column;
+}
+
+.PhotoModal .sidebar hr {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.PhotoModal .username {
+  display: flex;
+  align-items: center;
+}
+
+.PhotoModal .photo.profile {
+  width: 40px;
+  padding-bottom: 40px;
+  border-radius: 100%;
+  margin-right: 1.25em;
+}
+
+.PhotoModal .comments-container {
+  flex-grow: 1;
+}
+
+.PhotoModal .comments-container .comment {
+  margin-bottom: 10px;
+}
+
+.PhotoModal .actions-container .icons i {
+  font-size: 2.5em;
+  margin-right: 0.5em;
+  margin-bottom: 0.25em;
+  cursor: pointer;
+}
+
+.PhotoModal .actions-container .icons i.far.fa-heart.user-likes {
+  color: #e33a3a;
+}
+
+.PhotoModal .likes {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 0.25em;
+}
+
+.PhotoModal .arrow {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 5em;
+  width: 30px;
+  margin: 0 0.5em;
+}
+
+.PhotoModal .arrow i {
+  cursor: pointer;
+}
+
+.PhotoModal .close-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 2.5em;
+  margin: 0.25em;
+  cursor: pointer;
+}
+
+.PhotoModal i.close-button:hover,
+.PhotoModal .arrow:hover {
+  color: rgba(255, 255, 255, 0.65);
+}

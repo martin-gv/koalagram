@@ -1,0 +1,58 @@
+.navbar {
+  border-bottom: 1px solid #444444;
+}
+
+.navbar .navbar-brand a {
+  color: #eee;
+  font-size: 1rem;
+}
+
+.navbar .navbar-brand a:hover {
+  text-decoration: none;
+  color: #fff;
+}
+
+.navbar .nav-link {
+  font-size: 14px;
+  margin-right: 0.75em;
+}
+
+.navbar .logged-in {
+  color: #ddd;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+}
+
+.navbar .logged-in .current-user {
+  color: #fff;
+  font-weight: 600;
+  margin: 0 12px 0 8px;
+}
+
+.navbar .photo {
+  float: left;
+  position: relative;
+  width: 65%;
+  padding-bottom: 65%;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.navbar .photo.profile {
+  width: 30px;
+  padding-bottom: 30px;
+  border-radius: 100%;
+  margin-right: 1.25em;
+}
+
+.navbar div.logout {
+  color: #007bff;
+  cursor: pointer;
+  margin-right: 0;
+}
+
+.navbar div.logout:hover {
+  color: #0056b3;
+}

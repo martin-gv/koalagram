@@ -66,6 +66,19 @@
   margin-bottom: 0.25em;
 }
 
+.PhotoModal .posted {
+  color: #777;
+}
+
+.PhotoModal .new-comment .form-group {
+  margin: 0;
+}
+
+.PhotoModal .new-comment textarea {
+  font-size: 12px;
+  resize: none;
+}
+
 .PhotoModal .arrow {
   color: rgba(255, 255, 255, 0.5);
   font-size: 5em;

@@ -5,6 +5,21 @@ import "./PhotoModal.css";
 import Modal from "../Shared/Modal";
 
 class PhotoModal extends React.Component {
+  state = {
+    commentText: ""
+  };
+
+  onChange = e => {
+    this.setState({ [e.target.name]: e.target.value });
+  };
+
+  handleTextSubmit = e => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      this.props.addNewComment();
+    }
+  };
+
   onClick = e => {
     e.stopPropagation();
   };
@@ -12,6 +27,15 @@ class PhotoModal extends React.Component {
   onArrowClick = (e, num) => {
     e.stopPropagation();
     this.props.changePhoto(num);
+  };
+
+  handleKeyDown = e => {
+    console.log(e.key);
+  };
+
+  commentArea = React.createRef();
+  onClickCommentIcon = () => {
+    this.commentArea.current.focus();
   };
 
   render() {
@@ -31,7 +55,11 @@ class PhotoModal extends React.Component {
                 />
               )}
             </div>
-            <div className="modal-container" onClick={this.onClick}>
+            <div
+              className="modal-container"
+              onClick={this.onClick}
+              // onKeyDown={this.handleKeyDown}
+            >
               <div
                 className="photo"
                 style={{ backgroundImage: "url('" + photo.image_url + "')" }}
@@ -45,7 +73,7 @@ class PhotoModal extends React.Component {
                     }}
                   />
                   <div>
-                    <strong>{photo.username}</strong>
+                    <strong>{photo.username} • Follow</strong>
                   </div>
                 </div>
                 <hr />
@@ -68,7 +96,10 @@ class PhotoModal extends React.Component {
                       }
                       onClick={this.props.onClickLikeIcon}
                     />
-                    <i className="far fa-comment" />
+                    <i
+                      className="far fa-comment"
+                      onClick={this.onClickCommentIcon}
+                    />
                   </div>
                 </div>
                 <div className="likes">
@@ -81,7 +112,21 @@ class PhotoModal extends React.Component {
                 <div className="posted">1 minute ago</div>
                 <hr />
                 <div className="new-comment">
-                  <Link to="/login">Log in to comment</Link>
+                  {!this.props.currentUser ? (
+                    <Link to="/login">Log in to comment</Link>
+                  ) : (
+                    <div className="form-group">
+                      <textarea
+                        type="text"
+                        className="form-control"
+                        name="commentText"
+                        placeholder="Leave a comment..."
+                        ref={this.commentArea}
+                        onChange={this.onChange}
+                        onKeyPress={this.handleTextSubmit}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

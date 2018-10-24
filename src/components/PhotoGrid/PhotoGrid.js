@@ -27,7 +27,7 @@ class PhotoGrid extends React.Component {
     });
   };
 
-  onClickLikeIcon = e => {
+  onClickLikeIcon = () => {
     this.props.togglePhotoLike(this.state.selectedPhoto);
   };
 
@@ -52,10 +52,12 @@ class PhotoGrid extends React.Component {
             isFirst={selectedPhoto === photos[0]}
             isLast={selectedPhoto === photos[photos.length - 1]}
             changePhoto={this.changePhoto}
+            currentUser={this.props.currentUser}
             userLikes={
               (this.props.currentUser && this.props.currentUser.likes) || []
             }
             onClickLikeIcon={this.onClickLikeIcon}
+            addNewComment={this.props.addNewComment}
           />
         )}
         <div className="row">{grid}</div>

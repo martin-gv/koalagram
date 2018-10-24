@@ -108,6 +108,11 @@ class App extends Component {
     console.log(res);
   };
 
+  addNewComment = async () => {
+    const res = await apiCall("post", "/api/comments");
+    console.log(res);
+  };
+
   logout = () => {
     localStorage.clear();
     setTokenHeader(false);
@@ -146,6 +151,7 @@ class App extends Component {
                 currentUser={this.state.currentUser}
                 photos={this.state.photos}
                 togglePhotoLike={this.togglePhotoLike}
+                addNewComment={this.addNewComment}
               />
             )}
           />

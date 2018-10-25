@@ -54,6 +54,36 @@
   margin-right: 0.5em;
   margin-bottom: 0.25em;
   cursor: pointer;
+  position: relative;
+}
+
+@keyframes click-wave {
+  0% {
+    height: 30px;
+    width: 30px;
+    opacity: 0.5;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+  100% {
+    height: 80px;
+    width: 80px;
+    opacity: 0;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.PhotoModal .actions-container .icons i.far.fa-heart.animate:after {
+  animation: click-wave 0.4s ease-out;
+  background: #e04040;
+  content: "";
+  display: block;
+  position: absolute;
+  z-index: 100;
+  border-radius: 50%;
 }
 
 .PhotoModal .actions-container .icons i.far.fa-heart.user-likes {

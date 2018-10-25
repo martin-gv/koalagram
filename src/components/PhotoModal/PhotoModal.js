@@ -6,7 +6,8 @@ import Modal from "../Shared/Modal";
 
 class PhotoModal extends React.Component {
   state = {
-    commentText: ""
+    commentText: "",
+    heartClasses: ["far", "fa-heart"]
   };
 
   onChange = e => {
@@ -35,10 +36,21 @@ class PhotoModal extends React.Component {
     this.commentArea.current.focus();
   };
 
+  handleHeartClick = () => {
+    this.setState({ heartClasses: ["far", "fa-heart", "animate"] });
+    this.props.onClickLikeIcon();
+    setTimeout(() => {
+      this.setState({ heartClasses: ["far", "fa-heart"] });
+    }, 400);
+  };
+
   render() {
     let { photo, userLikes } = this.props;
     let userLikesThisPhoto =
       photo && Boolean(userLikes.find(x => x.photo_id === photo.id));
+    let stateCopy = [...this.state.heartClasses];
+    if (userLikesThisPhoto) stateCopy.push("user-likes");
+    let heart = stateCopy.join(" ");
     return (
       <div className="PhotoModal">
         {photo && (
@@ -85,14 +97,7 @@ class PhotoModal extends React.Component {
                 <hr />
                 <div className="actions-container">
                   <div className="icons">
-                    <i
-                      className={
-                        userLikesThisPhoto
-                          ? "far fa-heart user-likes"
-                          : "far fa-heart"
-                      }
-                      onClick={this.props.onClickLikeIcon}
-                    />
+                    <i className={heart} onClick={this.handleHeartClick} />
                     <i
                       className="far fa-comment"
                       onClick={this.onClickCommentIcon}

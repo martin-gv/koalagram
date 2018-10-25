@@ -29,10 +29,6 @@ class PhotoModal extends React.Component {
     this.props.changePhoto(num);
   };
 
-  handleKeyDown = e => {
-    console.log(e.key);
-  };
-
   commentArea = React.createRef();
   onClickCommentIcon = () => {
     this.commentArea.current.focus();

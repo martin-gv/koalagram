@@ -8,6 +8,30 @@ class PhotoGrid extends React.Component {
     selectedPhoto: undefined
   };
 
+  componentDidMount() {
+    document.addEventListener("keydown", this.handleKeyDown);
+  }
+
+  handleKeyDown = e => {
+    if (
+      this.state.photoModal &&
+      e.target.name !== "commentText" &&
+      (e.key === "ArrowRight" || e.key === "ArrowLeft")
+    ) {
+      e.preventDefault();
+      const { photos } = this.props;
+      if (e.key === "ArrowRight") {
+        if (this.state.selectedPhoto === photos[photos.length - 1]) return;
+        this.changePhoto(1);
+      } else if (e.key === "ArrowLeft") {
+        if (this.state.selectedPhoto === photos[0]) return;
+        this.changePhoto(-1);
+      }
+    } else if (this.state.photoModal && e.key === "Escape") {
+      this.setState({ photoModal: false });
+    }
+  };
+
   toggleModal = () => {
     this.setState(state => ({ photoModal: !state.photoModal }));
   };

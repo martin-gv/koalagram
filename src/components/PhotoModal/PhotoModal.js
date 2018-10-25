@@ -16,7 +16,8 @@ class PhotoModal extends React.Component {
   handleTextSubmit = e => {
     if (e.key === "Enter") {
       e.preventDefault();
-      this.props.addNewComment(this.state.commentText);
+      this.props.addNewComment(this.state.commentText, this.props.photo);
+      this.setState({ commentText: "" });
     }
   };
 
@@ -74,12 +75,12 @@ class PhotoModal extends React.Component {
                 </div>
                 <hr />
                 <div className="comments-container">
-                  <div className="comment">
-                    <strong>Username</strong> This is the comment
-                  </div>
-                  <div className="comment">
-                    <strong>Username</strong> This is the comment
-                  </div>
+                  {photo.comments &&
+                    photo.comments.map((x, index) => (
+                      <div key={index} className="comment">
+                        <strong>{x.username}</strong> {x.comment_text}
+                      </div>
+                    ))}
                 </div>
                 <hr />
                 <div className="actions-container">
@@ -118,6 +119,7 @@ class PhotoModal extends React.Component {
                         name="commentText"
                         placeholder="Leave a comment..."
                         ref={this.commentArea}
+                        value={this.state.commentText}
                         onChange={this.onChange}
                         onKeyPress={this.handleTextSubmit}
                       />

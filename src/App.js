@@ -104,8 +104,24 @@ class App extends Component {
     console.log(res);
   };
 
-  addNewComment = async comment => {
-    // console.log(this.state.photos)
+  addNewComment = async (comment, photo) => {
+    const { currentUser } = this.state;
+    console.log(photo);
+    const comments = [
+      ...photo.comments,
+      { username: currentUser.username, comment_text: comment }
+    ];
+    const newState = this.state.photos.map(x => {
+      if (x.id !== photo.id) {
+        return x;
+      } else {
+        return {
+          ...x,
+          comments
+        };
+      }
+    });
+    this.setState({ photos: newState });
     // const res = await apiCall("post", "/api/comments", { comment });
     // console.log(res);
   };

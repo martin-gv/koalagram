@@ -16,7 +16,7 @@ class PhotoModal extends React.Component {
   handleTextSubmit = e => {
     if (e.key === "Enter") {
       e.preventDefault();
-      this.props.addNewComment();
+      this.props.addNewComment(this.state.commentText);
     }
   };
 

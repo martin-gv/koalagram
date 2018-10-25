@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { Route, withRouter } from "react-router-dom";
-import jwtDecode from "jwt-decode";
 
 import "./App.css";
 import Navbar from "./components/Shared/Navbar";
@@ -16,17 +15,14 @@ class App extends Component {
     likeUpdateTimer: undefined
   };
 
-  componentDidMount() {
-    const { jwtToken } = localStorage;
-    if (jwtToken) {
-      console.log(jwtDecode(jwtToken));
-      // Auto login
-      //  setAuthorizationToken(jwtToken);
-      //  try {
-      //     store.dispatch(setCurrentUser(jwtDecode(jwtToken)));
-      //  } catch (err) {
-      //     store.dispatch(setCurrentUser({}));
-      //  }
+  async componentDidMount() {
+    const { jwtToken: token } = localStorage;
+    if (token) {
+      setTokenHeader(token);
+      const res = await apiCall("post", "api/auth/login", { token });
+      this.setCurrentUser(res.user);
+      this.props.history.push("/");
+      console.log("Auto login", res.user);
     }
     this.fetchPhotos();
   }
@@ -108,9 +104,10 @@ class App extends Component {
     console.log(res);
   };
 
-  addNewComment = async () => {
-    const res = await apiCall("post", "/api/comments");
-    console.log(res);
+  addNewComment = async comment => {
+    // console.log(this.state.photos)
+    // const res = await apiCall("post", "/api/comments", { comment });
+    // console.log(res);
   };
 
   logout = () => {

@@ -28,8 +28,8 @@ class App extends Component {
   }
 
   fetchPhotos = async () => {
-    const res = await apiCall("get", "/api/photos");
-    this.setState({ photos: res });
+    const { photos } = await apiCall("get", "/api/photos");
+    this.setState({ photos });
   };
 
   login = async loginData => {
@@ -106,7 +106,6 @@ class App extends Component {
 
   addNewComment = async (comment, photo) => {
     const { currentUser } = this.state;
-    console.log(photo);
     const comments = [
       ...photo.comments,
       { username: currentUser.username, comment_text: comment }
@@ -122,8 +121,12 @@ class App extends Component {
       }
     });
     this.setState({ photos: newState });
-    // const res = await apiCall("post", "/api/comments", { comment });
-    // console.log(res);
+    const res = await apiCall("post", "/api/comments", {
+      photoID: photo.id,
+      userID: currentUser.id,
+      comment
+    });
+    console.log(res);
   };
 
   logout = () => {

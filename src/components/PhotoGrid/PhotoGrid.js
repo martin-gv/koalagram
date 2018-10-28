@@ -25,6 +25,15 @@ class PhotoGrid extends React.Component {
     document.addEventListener("keydown", this.handleKeyDown);
   }
 
+  // componentDidUpdate(prevProps) {
+  //   if (this.props.location !== prevProps.location) {
+  //     const id = Number(this.props.location.hash.slice(1));
+  //     const selectedPhoto = this.props.photos.find(x => x.id === id);
+  //     console.log(id, selectedPhoto);
+  //     this.setState({ selectedPhoto, photoModal: true });
+  //   }
+  // }
+
   handleKeyDown = e => {
     if (
       this.state.photoModal &&
@@ -34,10 +43,10 @@ class PhotoGrid extends React.Component {
       e.preventDefault();
       const { photos } = this.props;
       if (e.key === "ArrowRight") {
-        if (this.state.selectedPhoto === photos[photos.length - 1]) return;
+        if (this.state.selectedPhoto.id === photos[photos.length - 1].id) return;
         this.changePhoto(1);
       } else if (e.key === "ArrowLeft") {
-        if (this.state.selectedPhoto === photos[0]) return;
+        if (this.state.selectedPhoto.id === photos[0].id) return;
         this.changePhoto(-1);
       }
     } else if (this.state.photoModal && e.key === "Escape") {
@@ -52,15 +61,19 @@ class PhotoGrid extends React.Component {
   openPhotoModal = photo => {
     this.setState({ selectedPhoto: photo });
     this.toggleModal();
+    const { pathname } = this.props.location;
+    this.props.history.push(pathname + "#" + photo.id);
   };
 
   changePhoto = num => {
     this.setState(state => {
-      let findPhoto = this.props.photos.find(
-        x => x.id === state.selectedPhoto.id
-      );
-      let currentIndex = this.props.photos.indexOf(findPhoto);
-      return { selectedPhoto: this.props.photos[currentIndex + num] };
+      const { photos } = this.props;
+      const currentPhoto = photos.find(x => x.id === state.selectedPhoto.id);
+      const currentIndex = photos.indexOf(currentPhoto);
+      const newPhoto = photos[currentIndex + num];
+      const { pathname } = this.props.location;
+      this.props.history.push(pathname + "#" + newPhoto.id);
+      return { selectedPhoto: newPhoto };
     });
   };
 

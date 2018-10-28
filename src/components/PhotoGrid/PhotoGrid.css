@@ -1,0 +1,28 @@
+.PhotoGrid .alert-success button:focus {
+  outline: none;
+}
+
+.PhotoGrid .col-4 {
+  position: relative;
+  max-width: 29.999999%;
+  padding-bottom: 29.999999%;
+  margin: 1.666666%;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  cursor: pointer;
+}
+
+.PhotoGrid .col-4::after {
+  content: "";
+  transition: background-color 100ms ease-out;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+}
+
+.PhotoGrid .col-4:hover::after {
+  background-color: rgba(0, 0, 0, 0.3);
+}

@@ -28,6 +28,9 @@ class Login extends React.Component {
           <h5 className="card-title" style={{ marginBottom: 20 }}>
             Login!
           </h5>
+          {this.props.errorMessage && (
+            <div className="alert alert-danger">{this.props.errorMessage}</div>
+          )}
           <form onSubmit={this.login}>
             <div className="form-group">
               <label>Username</label>
@@ -35,7 +38,9 @@ class Login extends React.Component {
                 type="text"
                 className="form-control"
                 name="username"
+                value={this.state.username}
                 onChange={this.onChange}
+                required
               />
             </div>
             <div className="form-group">
@@ -44,7 +49,9 @@ class Login extends React.Component {
                 type="password"
                 className="form-control"
                 name="password"
+                value={this.state.password}
                 onChange={this.onChange}
+                required
               />
             </div>
             <button type="submit" className="btn btn-block btn-primary">

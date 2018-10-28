@@ -1,0 +1,68 @@
+/* .User .col-4 {
+  background-color: salmon;
+}
+
+.User .col-8 {
+  background-color: blueviolet;
+} */
+
+.User .user-profile {
+  margin-bottom: 50px;
+  font-family: Lato;
+  font-size: 16px;
+}
+
+.User .user-profile .photo.profile {
+  width: 150px;
+  padding-bottom: 150px;
+  margin: auto;
+  position: relative;
+  border-radius: 100%;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.User .user-profile .username {
+  font-family: Lato;
+  font-weight: 300;
+  font-size: 2em;
+  margin-bottom: 10px;
+}
+
+.User .user-profile .stats {
+  margin-bottom: 10px;
+}
+
+.User .user-profile .stats div {
+  display: inline-block;
+}
+
+.User .user-profile .stats .photos {
+  margin-right: 20px;
+}
+
+@media (max-width: 992px) {
+  .User .user-profile .photo.profile {
+    width: 125px;
+    padding-bottom: 125px;
+  }
+}
+
+@media (max-width: 768px) {
+  .User .user-profile .photo.profile {
+    width: 100px;
+    padding-bottom: 100px;
+  }
+}
+
+@media (max-width: 576px) {
+  .User .user-profile .photo.profile {
+    width: 75px;
+    padding-bottom: 75px;
+  }
+
+  .User .user-profile .username {
+    font-size: 1.5em;
+  }
+}

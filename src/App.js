@@ -1,18 +1,22 @@
 import React, { Component } from "react";
-import { Route, withRouter } from "react-router-dom";
+import { Route, Switch, withRouter } from "react-router-dom";
 
 import "./App.css";
 import Navbar from "./components/Shared/Navbar";
-import PhotoGrid from "./components/PhotoGrid/PhotoGrid";
 import Signup from "./components/Auth/Signup";
 import Login from "./components/Auth/Login";
+import LoginMessage from "./components/Shared/LoginMessage";
+import PhotoGrid from "./components/PhotoGrid/PhotoGrid";
+import User from "./components/User/User";
 import { apiCall, setTokenHeader } from "./services/api";
 
 class App extends Component {
   state = {
     currentUser: undefined,
     photos: [],
-    likeUpdateTimer: undefined
+    likeUpdateTimer: undefined,
+    errorMessage: "",
+    loginMessage: false
   };
 
   async componentDidMount() {
@@ -21,35 +25,57 @@ class App extends Component {
       setTokenHeader(token);
       const res = await apiCall("post", "api/auth/login", { token });
       this.setCurrentUser(res.user);
-      this.props.history.push("/");
-      console.log("Auto login", res.user);
     }
-    this.fetchPhotos();
   }
 
-  fetchPhotos = async () => {
-    const { photos } = await apiCall("get", "/api/photos");
-    this.setState({ photos });
+  componentDidUpdate(prevProps) {
+    if (this.props.location !== prevProps.location) {
+      if (this.props.location.pathname !== "/login") {
+        this.setState({ errorMessage: "" });
+      }
+      if (this.props.location.pathname === "/") {
+        this.fetchPhotos();
+      }
+      if (this.props.location.pathname !== "/") {
+        this.setState({ loginMessage: false });
+      }
+    }
+  }
+
+  fetchPhotos = username => {
+    return apiCall("get", username ? `/api/users/${username}` : "/api/photos")
+      .then(res => {
+        this.setState({ photos: res.photos });
+        return true;
+      })
+      .catch(err => console.log(err));
   };
 
-  login = async loginData => {
-    try {
-      const { user, token } = await apiCall("post", "api/auth/login", {
-        user: loginData
+  login = loginData => {
+    apiCall("post", "api/auth/login", {
+      user: loginData
+    })
+      .then(res => {
+        const { user, token } = res;
+        localStorage.setItem("jwtToken", token);
+        setTokenHeader(token);
+        this.setCurrentUser(user);
+        this.props.history.push("/");
+        this.setState({ errorMessage: "", loginMessage: true });
+      })
+      .catch(err => {
+        console.log(err);
+        if (err.message) {
+          this.setState({ errorMessage: err.message });
+        }
       });
-      localStorage.setItem("jwtToken", token);
-      setTokenHeader(token);
-      this.setCurrentUser(user);
-      this.props.history.push("/");
-      console.log("Welcome back!", user);
-    } catch (err) {
-      console.log(err);
-    }
   };
 
   setCurrentUser = user => {
     this.setState({ currentUser: user });
   };
+
+  setErrorMessage = errorMessage => this.setState({ errorMessage });
 
   togglePhotoLike = photo => {
     if (this.state.currentUser) {
@@ -83,7 +109,7 @@ class App extends Component {
         };
       });
     } else {
-      this.props.history.push("/login");
+      this.loginRequired();
     }
   };
 
@@ -104,35 +130,45 @@ class App extends Component {
     console.log(res);
   };
 
-  addNewComment = async (comment, photo) => {
+  onChangeCommentText = (id, e) => {
+    const newState = this.state.photos.map(x => {
+      if (x.id !== id) return x;
+      return { ...x, commentText: e.target.value };
+    });
+    this.setState({ photos: newState });
+  };
+
+  addNewComment = async (photo, commentsContainer) => {
     const { currentUser } = this.state;
     const comments = [
       ...photo.comments,
-      { username: currentUser.username, comment_text: comment }
+      { username: currentUser.username, comment_text: photo.commentText }
     ];
     const newState = this.state.photos.map(x => {
-      if (x.id !== photo.id) {
-        return x;
-      } else {
-        return {
-          ...x,
-          comments
-        };
-      }
+      if (x.id !== photo.id) return x;
+      return { ...x, comments, commentText: "" };
     });
-    this.setState({ photos: newState });
+    this.setState({ photos: newState }, () => {
+      commentsContainer.scrollTop = commentsContainer.scrollHeight;
+    });
     const res = await apiCall("post", "/api/comments", {
       photoID: photo.id,
       userID: currentUser.id,
-      comment
+      comment: photo.commentText
     });
     console.log(res);
+  };
+
+  loginRequired = () => {
+    this.setState({ errorMessage: "You must be logged in" });
+    this.props.history.push("/login");
   };
 
   logout = () => {
     localStorage.clear();
     setTokenHeader(false);
     this.setState({ currentUser: undefined });
+    // to do: clear logged in user message?
   };
 
   render() {
@@ -140,37 +176,71 @@ class App extends Component {
       <div className="App">
         <Navbar currentUser={this.state.currentUser} logout={this.logout} />
         <div className="container">
-          <Route
-            path="/signup"
-            exact
-            render={props => (
-              <Signup {...props} setCurrentUser={this.setCurrentUser} />
-            )}
-          />
-          <Route
-            path="/login"
-            exact
-            render={props => (
-              <Login
-                {...props}
-                setCurrentUser={this.setCurrentUser}
-                login={this.login}
-              />
-            )}
-          />
-          <Route
-            path="/"
-            exact
-            render={props => (
-              <PhotoGrid
-                {...props}
-                currentUser={this.state.currentUser}
-                photos={this.state.photos}
-                togglePhotoLike={this.togglePhotoLike}
-                addNewComment={this.addNewComment}
-              />
-            )}
-          />
+          {this.state.loginMessage && (
+            <LoginMessage
+              currentUser={this.state.currentUser}
+              clearLoginMessage={() => this.setState({ loginMessage: false })}
+            />
+          )}
+          <Switch>
+            <Route
+              path="/signup"
+              exact
+              render={props => (
+                <Signup
+                  {...props}
+                  setCurrentUser={this.setCurrentUser}
+                  errorMessage={this.state.errorMessage}
+                  setErrorMessage={this.setErrorMessage}
+                />
+              )}
+            />
+            <Route
+              path="/login"
+              exact
+              render={props => (
+                <Login
+                  {...props}
+                  setCurrentUser={this.setCurrentUser}
+                  login={this.login}
+                  errorMessage={this.state.errorMessage}
+                />
+              )}
+            />
+            <Route
+              path="/"
+              exact
+              render={props => (
+                <PhotoGrid
+                  {...props}
+                  fetchPhotos={this.fetchPhotos}
+                  readyCallback={() => null}
+                  currentUser={this.state.currentUser}
+                  photos={this.state.photos}
+                  togglePhotoLike={this.togglePhotoLike}
+                  onChangeCommentText={this.onChangeCommentText}
+                  addNewComment={this.addNewComment}
+                  loginRequired={this.loginRequired}
+                />
+              )}
+            />
+            <Route
+              path="/:username"
+              exact
+              render={props => (
+                <User
+                  {...props}
+                  fetchPhotos={this.fetchPhotos}
+                  currentUser={this.state.currentUser}
+                  photos={this.state.photos}
+                  togglePhotoLike={this.togglePhotoLike}
+                  onChangeCommentText={this.onChangeCommentText}
+                  addNewComment={this.addNewComment}
+                  loginRequired={this.loginRequired}
+                />
+              )}
+            />
+          </Switch>
         </div>
       </div>
     );

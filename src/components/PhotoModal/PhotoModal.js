@@ -1,24 +1,43 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 
 import "./PhotoModal.css";
 import Modal from "../Shared/Modal";
 
 class PhotoModal extends React.Component {
   state = {
-    commentText: "",
     heartClasses: ["far", "fa-heart"]
   };
 
   onChange = e => {
-    this.setState({ [e.target.name]: e.target.value });
+    // const currentComment = this.props.photo.commentText || "";
+    // const currentLength = currentComment.length;
+    // const newLength = e.target.value.length;
+    // if (newLength > 255) {
+    //   if (newLength <= currentLength) {
+    //     this.props.onChangeCommentText(this.props.photo.id, e);
+    //   }
+    // } else {
+    //   this.props.onChangeCommentText(this.props.photo.id, e);
+    // }
+
+    if (e.target.value.length > 255) return;
+    this.props.onChangeCommentText(this.props.photo.id, e);
   };
+
+  commentsContainer = React.createRef();
 
   handleTextSubmit = e => {
     if (e.key === "Enter") {
       e.preventDefault();
-      this.props.addNewComment(this.state.commentText, this.props.photo);
-      this.setState({ commentText: "" });
+      if (
+        this.props.photo.commentText &&
+        this.props.photo.commentText.length <= 255
+      ) {
+        const { current: commentsContainer } = this.commentsContainer;
+        this.props.addNewComment(this.props.photo, commentsContainer);
+        this.commentArea.current.blur();
+      }
     }
   };
 
@@ -33,7 +52,11 @@ class PhotoModal extends React.Component {
 
   commentArea = React.createRef();
   onClickCommentIcon = () => {
-    this.commentArea.current.focus();
+    if (this.props.currentUser) {
+      this.commentArea.current.focus();
+    } else {
+      this.props.loginRequired();
+    }
   };
 
   handleHeartClick = () => {
@@ -42,6 +65,18 @@ class PhotoModal extends React.Component {
     setTimeout(() => {
       this.setState({ heartClasses: ["far", "fa-heart"] });
     }, 400);
+  };
+
+  navigateToUserProfile = () => {
+    const { username } = this.props.photo;
+    this.props.toggle();
+    if (this.props.location.pathname.slice(1) === username) {
+      window.scrollTo(0, 0);
+      // to do: change to animation
+      this.props.history.go();
+    } else {
+      this.props.history.push("/" + username);
+    }
   };
 
   render() {
@@ -57,39 +92,42 @@ class PhotoModal extends React.Component {
           <Modal show={this.props.show} toggle={this.props.toggle}>
             <i className="fas fa-times close-button" />
             <div className="left arrow">
-              {!this.props.isFirst && (
-                <i
-                  onClick={e => this.onArrowClick(e, -1)}
-                  className="fas fa-angle-left"
-                />
-              )}
+              <i
+                onClick={e => this.onArrowClick(e, -1)}
+                className={
+                  "fas fa-angle-left" + (this.props.isFirst ? " hide" : "")
+                }
+              />
             </div>
-            <div
-              className="modal-container"
-              onClick={this.onClick}
-              // onKeyDown={this.handleKeyDown}
-            >
+            <div className="modal-container" onClick={this.onClick}>
               <div
                 className="photo"
                 style={{ backgroundImage: "url('" + photo.image_url + "')" }}
               />
               <div className="sidebar">
-                <div className="username">
+                <div className="user">
                   <div
                     className="photo profile"
                     style={{
                       backgroundImage: "url('" + photo.profile_image_url + "')"
                     }}
+                    onClick={this.navigateToUserProfile}
                   />
-                  <div>
-                    <strong>{photo.username} • Follow</strong>
+                  <div
+                    className="username"
+                    onClick={this.navigateToUserProfile}
+                  >
+                    <strong>{photo.username}</strong>
                   </div>
                 </div>
                 <hr />
-                <div className="comments-container">
+                <div
+                  className="comments-container"
+                  ref={this.commentsContainer}
+                >
                   {photo.comments &&
                     photo.comments.map((x, index) => (
-                      <div key={index} className="comment">
+                      <div key={index} className={"comment " + (index + 1)}>
                         <strong>{x.username}</strong> {x.comment_text}
                       </div>
                     ))}
@@ -115,7 +153,7 @@ class PhotoModal extends React.Component {
                 <hr />
                 <div className="new-comment">
                   {!this.props.currentUser ? (
-                    <Link to="/login">Log in to comment</Link>
+                    <Link to="/login">Log in to like or comment</Link>
                   ) : (
                     <div className="form-group">
                       <textarea
@@ -124,22 +162,35 @@ class PhotoModal extends React.Component {
                         name="commentText"
                         placeholder="Leave a comment..."
                         ref={this.commentArea}
-                        value={this.state.commentText}
+                        value={this.props.photo.commentText || ""}
                         onChange={this.onChange}
                         onKeyPress={this.handleTextSubmit}
                       />
+                      {this.props.photo.commentText &&
+                        this.props.photo.commentText.length > 255 && (
+                          <div
+                            className="invalid-feedback"
+                            style={{
+                              display: "block",
+                              fontSize: 13,
+                              fontWeight: "bold"
+                            }}
+                          >
+                            Comment is too long
+                          </div>
+                        )}
                     </div>
                   )}
                 </div>
               </div>
             </div>
             <div className="right arrow">
-              {!this.props.isLast && (
-                <i
-                  className="fas fa-angle-right"
-                  onClick={e => this.onArrowClick(e, 1)}
-                />
-              )}
+              <i
+                className={
+                  "fas fa-angle-right" + (this.props.isLast ? " hide" : "")
+                }
+                onClick={e => this.onArrowClick(e, 1)}
+              />
             </div>
           </Modal>
         )}
@@ -148,4 +199,4 @@ class PhotoModal extends React.Component {
   }
 }
 
-export default PhotoModal;
+export default withRouter(PhotoModal);

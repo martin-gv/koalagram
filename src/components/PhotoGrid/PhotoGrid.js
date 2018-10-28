@@ -18,21 +18,17 @@ class PhotoGrid extends React.Component {
       .then(res => {
         if (res) {
           this.setState({ ready: true });
+          const id = Number(this.props.location.hash.slice(1));
+          if (id) {
+            const selectedPhoto = this.props.photos.find(x => x.id === id);
+            this.setState({ selectedPhoto, photoModal: true });
+          }
           this.props.readyCallback();
         }
       })
       .catch(err => console.log(err));
     document.addEventListener("keydown", this.handleKeyDown);
   }
-
-  // componentDidUpdate(prevProps) {
-  //   if (this.props.location !== prevProps.location) {
-  //     const id = Number(this.props.location.hash.slice(1));
-  //     const selectedPhoto = this.props.photos.find(x => x.id === id);
-  //     console.log(id, selectedPhoto);
-  //     this.setState({ selectedPhoto, photoModal: true });
-  //   }
-  // }
 
   handleKeyDown = e => {
     if (
@@ -43,7 +39,8 @@ class PhotoGrid extends React.Component {
       e.preventDefault();
       const { photos } = this.props;
       if (e.key === "ArrowRight") {
-        if (this.state.selectedPhoto.id === photos[photos.length - 1].id) return;
+        if (this.state.selectedPhoto.id === photos[photos.length - 1].id)
+          return;
         this.changePhoto(1);
       } else if (e.key === "ArrowLeft") {
         if (this.state.selectedPhoto.id === photos[0].id) return;

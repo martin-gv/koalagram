@@ -57,15 +57,12 @@ class PhotoModal extends React.Component {
     }, 400);
   };
 
-  navigateToUserProfile = inputUsername => {
-    // const username = inputUsername || this.props.photo.username;
+  navigateToUserProfile = () => {
     const username = this.props.photo.username;
     this.props.toggle();
     if (this.props.location.pathname.slice(1) === username) {
       window.scrollTo(0, 0);
-      // to do: change to animation
-      // to do: remove hash?
-      this.props.history.go();
+      this.props.history.push("/" + username);
     } else {
       this.props.history.push("/" + username);
     }
@@ -118,16 +115,24 @@ class PhotoModal extends React.Component {
                   ref={this.commentsContainer}
                 >
                   {photo.comments &&
-                    photo.comments.map((x, index) => (
-                      <div key={index} className={"comment " + (index + 1)}>
-                        <strong
-                          onClick={() => this.navigateToUserProfile(x.username)}
-                        >
-                          <span className="username">{x.username}</span>
-                        </strong>{" "}
-                        {x.comment_text}
-                      </div>
-                    ))}
+                    photo.comments.map((x, index) => {
+                      const commentEnd = x.comment_text.lastIndexOf("#");
+                      const comment = x.comment_text.slice(0, commentEnd);
+                      const hashtag = x.comment_text.slice(commentEnd);
+                      return (
+                        <div key={index} className={"comment " + (index + 1)}>
+                          <span className="username">
+                            <Link to={"/" + x.username}>{x.username}</Link>
+                          </span>{" "}
+                          {comment}
+                          <span className="hashtag">
+                            <Link to={"/photos/" + hashtag.slice(1)}>
+                              {hashtag}
+                            </Link>
+                          </span>
+                        </div>
+                      );
+                    })}
                 </div>
                 <hr />
                 <div className="actions-container">

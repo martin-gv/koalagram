@@ -32,6 +32,29 @@ class PhotoGrid extends React.Component {
     document.addEventListener("keydown", this.handleKeyDown);
   }
 
+  async componentDidUpdate(prevProps) {
+    if (this.props.location.pathname !== prevProps.location.pathname) {
+      this.setState({
+        photoModal: false,
+        selectedPhoto: undefined,
+        ready: false
+      });
+      const username = this.props.match.params.username;
+      const hashtag = this.props.match.params.hashtag;
+      let res;
+      if (hashtag) {
+        res = await this.props.fetchPhotosByHashtag(hashtag);
+      } else {
+        res = await this.props.fetchPhotos(username);
+      }
+      if (res) {
+        this.setState({ ready: true });
+        window.scrollTo(0, 0);
+        this.props.readyCallback();
+      }
+    }
+  }
+
   handleKeyDown = e => {
     if (
       this.state.photoModal &&

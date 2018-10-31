@@ -69,10 +69,20 @@
   margin-bottom: 10px;
 }
 
-.PhotoModal .comments-container .comment .username {
-  color: #145ca0;
+.PhotoModal .comments-container .comment .username a {
+  color: #094680;
+  font-weight: bold;
 }
 
+.PhotoModal .comments-container .comment .username a:hover,
+.PhotoModal .comments-container .comment .hashtag a:hover {
+  text-decoration: none;
+}
+
+.PhotoModal .comments-container .comment .hashtag a,
+.PhotoModal .comments-container .comment .hashtag a:hover {
+  color: #004c9e;
+}
 .PhotoModal .actions-container .icons i {
   font-size: 2.5em;
   margin-right: 0.5em;

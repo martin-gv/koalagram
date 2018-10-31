@@ -11,22 +11,24 @@ class PhotoGrid extends React.Component {
     ready: false
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     const username = this.props.match.params.username;
-    this.props
-      .fetchPhotos(username)
-      .then(res => {
-        if (res) {
-          this.setState({ ready: true });
-          const id = Number(this.props.location.hash.slice(1));
-          if (id) {
-            const selectedPhoto = this.props.photos.find(x => x.id === id);
-            this.setState({ selectedPhoto, photoModal: true });
-          }
-          this.props.readyCallback();
-        }
-      })
-      .catch(err => console.log(err));
+    const hashtag = this.props.match.params.hashtag;
+    let res;
+    if (hashtag) {
+      res = await this.props.fetchPhotosByHashtag(hashtag);
+    } else {
+      res = await this.props.fetchPhotos(username);
+    }
+    if (res) {
+      this.setState({ ready: true });
+      const id = Number(this.props.location.hash.slice(1));
+      if (id) {
+        const selectedPhoto = this.props.photos.find(x => x.id === id);
+        if (selectedPhoto) this.setState({ selectedPhoto, photoModal: true });
+      }
+      this.props.readyCallback();
+    }
     document.addEventListener("keydown", this.handleKeyDown);
   }
 
@@ -78,6 +80,11 @@ class PhotoGrid extends React.Component {
     this.props.togglePhotoLike(this.state.selectedPhoto);
   };
 
+  randomPhoto = () => {
+    const randNum = Math.floor(Math.random() * this.props.photos.length);
+    return this.props.photos[randNum];
+  };
+
   render() {
     let { photos } = this.props;
     let { selectedPhoto } = this.state;
@@ -109,7 +116,34 @@ class PhotoGrid extends React.Component {
             loginRequired={this.props.loginRequired}
           />
         )}
-        <div className="row">{this.state.ready && grid}</div>
+        {this.state.ready &&
+          this.props.match.params.hashtag && (
+            <div>
+              <div className="row hashtag-header">
+                <div className="col-4">
+                  <div
+                    className="round-photo"
+                    style={{
+                      backgroundImage:
+                        "url('" + this.randomPhoto().image_url + "')"
+                    }}
+                  />
+                </div>
+                <div className="col-8">
+                  <div className="hashtag">
+                    #{this.props.match.params.hashtag}
+                  </div>
+                  <div className="stats">
+                    <div className="photos">
+                      <strong>{this.props.photos.length}</strong> photos
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <hr />
+            </div>
+          )}
+        <div className="row photo-grid">{this.state.ready && grid}</div>
       </div>
     );
   }

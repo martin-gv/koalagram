@@ -1,5 +1,6 @@
 import React from "react";
 import { Link, withRouter } from "react-router-dom";
+import moment from "moment";
 
 import "./PhotoModal.css";
 import Modal from "../Shared/Modal";
@@ -10,17 +11,6 @@ class PhotoModal extends React.Component {
   };
 
   onChange = e => {
-    // const currentComment = this.props.photo.commentText || "";
-    // const currentLength = currentComment.length;
-    // const newLength = e.target.value.length;
-    // if (newLength > 255) {
-    //   if (newLength <= currentLength) {
-    //     this.props.onChangeCommentText(this.props.photo.id, e);
-    //   }
-    // } else {
-    //   this.props.onChangeCommentText(this.props.photo.id, e);
-    // }
-
     if (e.target.value.length > 255) return;
     this.props.onChangeCommentText(this.props.photo.id, e);
   };
@@ -67,12 +57,14 @@ class PhotoModal extends React.Component {
     }, 400);
   };
 
-  navigateToUserProfile = () => {
-    const { username } = this.props.photo;
+  navigateToUserProfile = inputUsername => {
+    // const username = inputUsername || this.props.photo.username;
+    const username = this.props.photo.username;
     this.props.toggle();
     if (this.props.location.pathname.slice(1) === username) {
       window.scrollTo(0, 0);
       // to do: change to animation
+      // to do: remove hash?
       this.props.history.go();
     } else {
       this.props.history.push("/" + username);
@@ -128,7 +120,12 @@ class PhotoModal extends React.Component {
                   {photo.comments &&
                     photo.comments.map((x, index) => (
                       <div key={index} className={"comment " + (index + 1)}>
-                        <strong>{x.username}</strong> {x.comment_text}
+                        <strong
+                          onClick={() => this.navigateToUserProfile(x.username)}
+                        >
+                          <span className="username">{x.username}</span>
+                        </strong>{" "}
+                        {x.comment_text}
                       </div>
                     ))}
                 </div>
@@ -149,7 +146,9 @@ class PhotoModal extends React.Component {
                       : `${photo.likes} likes`
                     : "No likes yet"}
                 </div>
-                <div className="posted">1 minute ago</div>
+                <div className="posted">
+                  {moment(photo.created_at).fromNow()}
+                </div>
                 <hr />
                 <div className="new-comment">
                   {!this.props.currentUser ? (

@@ -33,10 +33,10 @@
 .PhotoModal .user {
   display: flex;
   align-items: center;
-  cursor: pointer;
 }
 
 .PhotoModal .username {
+  cursor: pointer;
   word-break: break-all;
 }
 
@@ -67,6 +67,10 @@
 
 .PhotoModal .comments-container .comment {
   margin-bottom: 10px;
+}
+
+.PhotoModal .comments-container .comment .username {
+  color: #145ca0;
 }
 
 .PhotoModal .actions-container .icons i {
@@ -177,5 +181,9 @@
   .PhotoModal .comments-container {
     height: 100%;
     max-height: 200px;
+  }
+
+  .PhotoModal .arrow {
+    margin: 0 5px;
   }
 }

@@ -23,7 +23,7 @@ class App extends Component {
     const { jwtToken: token } = localStorage;
     if (token) {
       setTokenHeader(token);
-      const res = await apiCall("post", "api/auth/login", { token });
+      const res = await apiCall("post", "/api/auth/login", { token });
       this.setCurrentUser(res.user);
     }
   }
@@ -44,6 +44,15 @@ class App extends Component {
 
   fetchPhotos = username => {
     return apiCall("get", username ? `/api/users/${username}` : "/api/photos")
+      .then(res => {
+        this.setState({ photos: res.photos });
+        return true;
+      })
+      .catch(err => console.log(err));
+  };
+
+  fetchPhotosByHashtag = hashtag => {
+    return apiCall("get", "/api/photos/" + hashtag)
       .then(res => {
         this.setState({ photos: res.photos });
         return true;
@@ -208,12 +217,13 @@ class App extends Component {
               )}
             />
             <Route
-              path="/"
+              path={"/photos/:hashtag"}
               exact
               render={props => (
                 <PhotoGrid
                   {...props}
                   fetchPhotos={this.fetchPhotos}
+                  fetchPhotosByHashtag={this.fetchPhotosByHashtag}
                   readyCallback={() => null}
                   currentUser={this.state.currentUser}
                   photos={this.state.photos}
@@ -231,6 +241,23 @@ class App extends Component {
                 <User
                   {...props}
                   fetchPhotos={this.fetchPhotos}
+                  currentUser={this.state.currentUser}
+                  photos={this.state.photos}
+                  togglePhotoLike={this.togglePhotoLike}
+                  onChangeCommentText={this.onChangeCommentText}
+                  addNewComment={this.addNewComment}
+                  loginRequired={this.loginRequired}
+                />
+              )}
+            />
+            <Route
+              path={"/"}
+              render={props => (
+                <PhotoGrid
+                  {...props}
+                  fetchPhotos={this.fetchPhotos}
+                  fetchPhotosByHashtag={this.fetchPhotosByHashtag}
+                  readyCallback={() => null}
                   currentUser={this.state.currentUser}
                   photos={this.state.photos}
                   togglePhotoLike={this.togglePhotoLike}

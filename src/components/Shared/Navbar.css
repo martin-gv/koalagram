@@ -12,6 +12,11 @@
   color: #fff;
 }
 
+.navbar .hashtag-search {
+  font-size: 13px;
+  height: 30px;
+}
+
 .navbar .nav-link {
   font-size: 14px;
   margin-right: 0.75em;

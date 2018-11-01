@@ -67,6 +67,7 @@
 
 .PhotoModal .comments-container .comment {
   margin-bottom: 10px;
+  word-break: break-all;
 }
 
 .PhotoModal .comments-container .comment .username a {

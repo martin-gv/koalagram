@@ -116,20 +116,24 @@ class PhotoModal extends React.Component {
                 >
                   {photo.comments &&
                     photo.comments.map((x, index) => {
-                      const commentEnd = x.comment_text.lastIndexOf("#");
-                      const comment = x.comment_text.slice(0, commentEnd);
-                      const hashtag = x.comment_text.slice(commentEnd);
+                      const rule = /(#[^\s]+)/;
+                      const splitStr = x.comment_text.split(rule);
+                      const parsedComment = splitStr.map((x, i) => {
+                        if (x.match(rule)) {
+                          return (
+                            <span key={i} className="hashtag">
+                              <Link to={"/photos/" + x.slice(1)}>{x}</Link>
+                            </span>
+                          );
+                        }
+                        return x;
+                      });
                       return (
-                        <div key={index} className={"comment " + (index + 1)}>
+                        <div key={index} className={"comment " + index}>
                           <span className="username">
                             <Link to={"/" + x.username}>{x.username}</Link>
                           </span>{" "}
-                          {comment}
-                          <span className="hashtag">
-                            <Link to={"/photos/" + hashtag.slice(1)}>
-                              {hashtag}
-                            </Link>
-                          </span>
+                          {parsedComment}
                         </div>
                       );
                     })}

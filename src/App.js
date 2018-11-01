@@ -183,7 +183,11 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <Navbar currentUser={this.state.currentUser} logout={this.logout} />
+        <Navbar
+          currentUser={this.state.currentUser}
+          logout={this.logout}
+          fetchPhotosByHashtag={this.fetchPhotosByHashtag}
+        />
         <div className="container">
           {this.state.loginMessage && (
             <LoginMessage

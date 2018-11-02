@@ -2,51 +2,40 @@ import React from "react";
 
 import "./User.css";
 import PhotoGrid from "../PhotoGrid/PhotoGrid";
+import ProfileInfo from "./ProfileInfo";
+import TabNav from "./TabNav";
 
 class User extends React.Component {
-  state = {
-    ready: false
+  state = { ready: false, tab: "photos" };
+  switchPhotos = tab => {
+    if (tab === "likes") {
+      this.props.switchPhotos("likes");
+    } else {
+      this.props.switchPhotos("photos");
+    }
+    this.setState({ tab });
   };
 
   render() {
-    const totalLikes = this.props.photos.reduce((acc, cur) => {
-      return acc + cur.likes;
-    }, 0);
+    const { ready, tab } = this.state;
+    const { photos, user, currentUser } = this.props;
+    const likes = ready && photos.reduce((acc, cur) => acc + cur.likes, 0);
+    const ownProfile = currentUser && currentUser.id === user.id && true;
 
     return (
       <div className="User">
-        {this.state.ready && (
-          <div className="row user-profile">
-            <div className="col-4">
-              <div
-                className="photo profile"
-                style={{
-                  backgroundImage:
-                    "url('" + this.props.photos[0].profile_image_url + "')"
-                }}
-              />
-            </div>
-            <div className="col-8">
-              <div className="username">{this.props.photos[0].username}</div>
-              <div className="stats">
-                <div className="photos">
-                  <strong>{this.props.photos.length}</strong> photos
-                </div>
-                <div className="likes">
-                  <strong>{totalLikes}</strong> likes
-                </div>
-              </div>
-              <div className="bio">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut vel
-                enim a enim finibus gravida. Maecenas nunc lacus, vulputate at
-                gravida in, congue vel sem. Suspendisse potenti.
-              </div>
-            </div>
-          </div>
+        {ready && <ProfileInfo {...{ photos, user, likes }} />}
+        {ownProfile && (
+          <TabNav
+            switchPhotos={this.switchPhotos}
+            selected={this.state.tab}
+            currentUser={currentUser}
+          />
         )}
-        <hr />
+        {/* {tab === "photos" ? <div>Photos!</div> : <div>Likes!</div>} */}
         <PhotoGrid
           fetchPhotos={this.props.fetchPhotos}
+          fetchPhotosLikedByUser={this.props.fetchPhotosLikedByUser}
           readyCallback={() => this.setState({ ready: true })}
           currentUser={this.props.currentUser}
           photos={this.props.photos}
@@ -54,6 +43,7 @@ class User extends React.Component {
           onChangeCommentText={this.props.onChangeCommentText}
           addNewComment={this.props.addNewComment}
           loginRequired={this.props.loginRequired}
+          tab={tab}
         />
       </div>
     );

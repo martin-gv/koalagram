@@ -14,9 +14,12 @@ class App extends Component {
   state = {
     currentUser: undefined,
     photos: [],
+    user: {},
     likeUpdateTimer: undefined,
     errorMessage: "",
-    loginMessage: false
+    loginMessage: false,
+    storePhotos: [],
+    photosLikedByUser: []
   };
 
   async componentDidMount() {
@@ -33,9 +36,6 @@ class App extends Component {
       if (this.props.location.pathname !== "/login") {
         this.setState({ errorMessage: "" });
       }
-      if (this.props.location.pathname === "/") {
-        this.fetchPhotos();
-      }
       if (this.props.location.pathname !== "/") {
         this.setState({ loginMessage: false });
       }
@@ -43,9 +43,11 @@ class App extends Component {
   }
 
   fetchPhotos = username => {
+    // username is optional
     return apiCall("get", username ? `/api/users/${username}` : "/api/photos")
       .then(res => {
-        this.setState({ photos: res.photos });
+        const user = res.user ? { ...res.user[0] } : {};
+        this.setState({ photos: res.photos, user, storePhotos: res.photos });
         return true;
       })
       .catch(err => console.log(err));
@@ -58,6 +60,25 @@ class App extends Component {
         return true;
       })
       .catch(err => console.log(err));
+  };
+
+  fetchPhotosLikedByUser = username => {
+    return apiCall("get", "/api/users/" + username + "/likes")
+      .then(res => {
+        this.setState({ photosLikedByUser: res.photos });
+        return true;
+      })
+      .catch(err => console.log(err));
+  };
+
+  switchPhotos = type => {
+    if (type === "likes") {
+      this.setState(state => ({ storePhotos: state.photos }));
+      this.setState(state => ({ photos: state.photosLikedByUser }));
+    } else if (type === "photos") {
+      this.setState(state => ({ photosLikedByUser: state.photos }));
+      this.setState(state => ({ photos: state.storePhotos }));
+    }
   };
 
   login = loginData => {
@@ -80,9 +101,7 @@ class App extends Component {
       });
   };
 
-  setCurrentUser = user => {
-    this.setState({ currentUser: user });
-  };
+  setCurrentUser = user => this.setState({ currentUser: user });
 
   setErrorMessage = errorMessage => this.setState({ errorMessage });
 
@@ -228,13 +247,13 @@ class App extends Component {
                   {...props}
                   fetchPhotos={this.fetchPhotos}
                   fetchPhotosByHashtag={this.fetchPhotosByHashtag}
-                  readyCallback={() => null}
                   currentUser={this.state.currentUser}
                   photos={this.state.photos}
                   togglePhotoLike={this.togglePhotoLike}
                   onChangeCommentText={this.onChangeCommentText}
                   addNewComment={this.addNewComment}
                   loginRequired={this.loginRequired}
+                  readyCallback={() => null}
                 />
               )}
             />
@@ -245,29 +264,33 @@ class App extends Component {
                 <User
                   {...props}
                   fetchPhotos={this.fetchPhotos}
+                  fetchPhotosLikedByUser={this.fetchPhotosLikedByUser}
                   currentUser={this.state.currentUser}
                   photos={this.state.photos}
+                  user={this.state.user}
                   togglePhotoLike={this.togglePhotoLike}
                   onChangeCommentText={this.onChangeCommentText}
                   addNewComment={this.addNewComment}
                   loginRequired={this.loginRequired}
+                  switchPhotos={this.switchPhotos}
                 />
               )}
             />
             <Route
-              path={"/"}
+              path="/"
+              exact
               render={props => (
                 <PhotoGrid
                   {...props}
                   fetchPhotos={this.fetchPhotos}
                   fetchPhotosByHashtag={this.fetchPhotosByHashtag}
-                  readyCallback={() => null}
                   currentUser={this.state.currentUser}
                   photos={this.state.photos}
                   togglePhotoLike={this.togglePhotoLike}
                   onChangeCommentText={this.onChangeCommentText}
                   addNewComment={this.addNewComment}
                   loginRequired={this.loginRequired}
+                  readyCallback={() => null}
                 />
               )}
             />

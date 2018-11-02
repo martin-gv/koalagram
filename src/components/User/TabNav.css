@@ -1,0 +1,32 @@
+.TabNav {
+  display: flex;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+.TabNav > div {
+  display: inline-block;
+  font-family: "Lato", sans-serif;
+  font-weight: 400;
+  text-transform: uppercase;
+  font-size: 14px;
+  text-align: center;
+  color: #666;
+  letter-spacing: 2px;
+  flex-basis: 160px;
+  cursor: pointer;
+  padding-bottom: 5px;
+}
+
+.TabNav .line {
+  height: 1px;
+  background-color: #aaa;
+  margin: auto;
+  margin-top: 11px;
+  width: 0%;
+  transition: width 200ms ease-out;
+}
+
+.TabNav .line.active {
+  width: 100%;
+}

@@ -37,14 +37,20 @@ class Navbar extends React.Component {
           <form className="form-inline">
             <div className="logged-in">
               Logged in as
-              <span className="current-user">{currentUser.username}</span>
-              <div
-                className="photo profile"
-                style={{
-                  backgroundImage:
-                    "url('" + currentUser.profile_image_url + "')"
-                }}
-              />
+              <span className="current-user">
+                <Link to={"/" + currentUser.username}>
+                  {currentUser.username}
+                </Link>
+              </span>
+              <Link to={"/" + currentUser.username}>
+                <div
+                  className="photo profile"
+                  style={{
+                    backgroundImage:
+                      "url('" + currentUser.profile_image_url + "')"
+                  }}
+                />
+              </Link>
             </div>
             <div className="nav-link logout" onClick={this.props.logout}>
               Logout

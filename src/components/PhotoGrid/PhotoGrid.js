@@ -3,6 +3,7 @@ import { withRouter } from "react-router-dom";
 
 import "./PhotoGrid.css";
 import PhotoModal from "../PhotoModal/PhotoModal";
+import HashtagHeader from "./HashtagHeader";
 
 class PhotoGrid extends React.Component {
   state = {
@@ -11,48 +12,68 @@ class PhotoGrid extends React.Component {
     ready: false
   };
 
+  resetComponent = () =>
+    this.setState({
+      photoModal: false,
+      selectedPhoto: undefined,
+      ready: false
+    });
+
   async componentDidMount() {
+    // if no username, then all photos fetched for home route
     const username = this.props.match.params.username;
     const hashtag = this.props.match.params.hashtag;
-    let res;
-    if (hashtag) {
-      res = await this.props.fetchPhotosByHashtag(hashtag);
-    } else {
-      res = await this.props.fetchPhotos(username);
-    }
+    const currentUser = this.props.currentUser;
+
+    const res = hashtag
+      ? await this.props.fetchPhotosByHashtag(hashtag)
+      : await this.props.fetchPhotos(username);
     if (res) {
       this.setState({ ready: true });
       const id = Number(this.props.location.hash.slice(1));
-      if (id) {
-        const selectedPhoto = this.props.photos.find(x => x.id === id);
-        if (selectedPhoto) this.setState({ selectedPhoto, photoModal: true });
-      }
+      // shows modal if link includes photo id in url #hash
+      const selectedPhoto = id
+        ? this.props.photos.find(x => x.id === id)
+        : undefined;
+      if (selectedPhoto) this.setState({ selectedPhoto, photoModal: true });
       this.props.readyCallback();
     }
+
+    // get photos liked by user on user's own profile
+    if (currentUser && currentUser.username === username) {
+      await this.props.fetchPhotosLikedByUser(username);
+    }
+
+    // for keyboard navigation in modal
     document.addEventListener("keydown", this.handleKeyDown);
   }
 
   async componentDidUpdate(prevProps) {
+    const username = this.props.match.params.username;
+    const hashtag = this.props.match.params.hashtag;
+    const currentUser = this.props.currentUser;
     if (this.props.location.pathname !== prevProps.location.pathname) {
-      this.setState({
-        photoModal: false,
-        selectedPhoto: undefined,
-        ready: false
-      });
-      const username = this.props.match.params.username;
-      const hashtag = this.props.match.params.hashtag;
-      let res;
-      if (hashtag) {
-        res = await this.props.fetchPhotosByHashtag(hashtag);
-      } else {
-        res = await this.props.fetchPhotos(username);
-      }
+      this.resetComponent();
+      const res = hashtag
+        ? await this.props.fetchPhotosByHashtag(hashtag)
+        : await this.props.fetchPhotos(username);
       if (res) {
         this.setState({ ready: true });
         window.scrollTo(0, 0);
         this.props.readyCallback();
       }
+
+      // get photos liked by user on user's own profile
+      if (currentUser && currentUser.username === username)
+        await this.props.fetchPhotosLikedByUser(username);
     }
+
+    // get photos liked by user on autologin
+    if (
+      currentUser !== prevProps.currentUser &&
+      currentUser.username === username
+    )
+      await this.props.fetchPhotosLikedByUser(username);
   }
 
   handleKeyDown = e => {
@@ -109,9 +130,9 @@ class PhotoGrid extends React.Component {
   };
 
   render() {
-    let { photos } = this.props;
     let { selectedPhoto } = this.state;
-    let grid = photos.map(x => (
+    let { photos } = this.props;
+    let gridOfPhotos = photos.map(x => (
       <div
         className="col-4"
         key={x.id}
@@ -141,32 +162,13 @@ class PhotoGrid extends React.Component {
         )}
         {this.state.ready &&
           this.props.match.params.hashtag && (
-            <div>
-              <div className="row hashtag-header">
-                <div className="col-4">
-                  <div
-                    className="round-photo"
-                    style={{
-                      backgroundImage:
-                        "url('" + this.randomPhoto().image_url + "')"
-                    }}
-                  />
-                </div>
-                <div className="col-8">
-                  <div className="hashtag">
-                    #{this.props.match.params.hashtag}
-                  </div>
-                  <div className="stats">
-                    <div className="photos">
-                      <strong>{this.props.photos.length}</strong> photos
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <hr />
-            </div>
+            <HashtagHeader
+              randomPhoto={this.randomPhoto}
+              hashtag={this.props.match.params.hashtag}
+              totalPhotos={this.props.photos.length}
+            />
           )}
-        <div className="row photo-grid">{this.state.ready && grid}</div>
+        <div className="row photo-grid">{this.state.ready && gridOfPhotos}</div>
       </div>
     );
   }

@@ -29,10 +29,14 @@
   align-items: center;
 }
 
-.navbar .logged-in .current-user {
+.navbar .logged-in .current-user a {
   color: #fff;
   font-weight: 600;
   margin: 0 12px 0 8px;
+}
+
+.navbar .logged-in .current-user a:hover {
+  text-decoration: none;
 }
 
 .navbar .photo {

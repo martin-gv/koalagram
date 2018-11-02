@@ -18,13 +18,13 @@ class User extends React.Component {
 
   render() {
     const { ready, tab } = this.state;
-    const { photos, user, currentUser } = this.props;
-    const likes = ready && photos.reduce((acc, cur) => acc + cur.likes, 0);
+    const { photos, storePhotos, user, currentUser } = this.props;
+    const likes = ready && storePhotos.reduce((acc, cur) => acc + cur.likes, 0);
     const ownProfile = currentUser && currentUser.id === user.id && true;
 
     return (
       <div className="User">
-        {ready && <ProfileInfo {...{ photos, user, likes }} />}
+        {ready && <ProfileInfo {...{ storePhotos, user, likes }} />}
         {ownProfile && (
           <TabNav
             switchPhotos={this.switchPhotos}

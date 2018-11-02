@@ -267,6 +267,7 @@ class App extends Component {
                   fetchPhotosLikedByUser={this.fetchPhotosLikedByUser}
                   currentUser={this.state.currentUser}
                   photos={this.state.photos}
+                  storePhotos={this.state.storePhotos}
                   user={this.state.user}
                   togglePhotoLike={this.togglePhotoLike}
                   onChangeCommentText={this.onChangeCommentText}

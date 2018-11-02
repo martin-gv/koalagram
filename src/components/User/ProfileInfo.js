@@ -15,7 +15,7 @@ const ProfileInfo = props => (
         <div className="username">{props.user.username}</div>
         <div className="stats">
           <div className="photos">
-            <strong>{props.photos.length}</strong> photos
+            <strong>{props.storePhotos.length}</strong> photos
           </div>
           <div className="likes">
             <strong>{props.likes}</strong> likes

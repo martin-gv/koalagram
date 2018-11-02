@@ -101,6 +101,10 @@ class PhotoGrid extends React.Component {
     this.setState(state => ({ photoModal: !state.photoModal }));
   };
 
+  closeModal = () => {
+    this.setState({ photoModal: false, selectedPhoto: undefined });
+  };
+
   openPhotoModal = photo => {
     this.setState({ selectedPhoto: photo });
     this.toggleModal();
@@ -145,7 +149,7 @@ class PhotoGrid extends React.Component {
         {selectedPhoto && (
           <PhotoModal
             show={this.state.photoModal}
-            toggle={this.toggleModal}
+            closeModal={this.closeModal}
             photo={photos.find(x => x.id === selectedPhoto.id)}
             isFirst={selectedPhoto.id === photos[0].id}
             isLast={selectedPhoto.id === photos[photos.length - 1].id}

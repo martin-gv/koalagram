@@ -59,7 +59,7 @@ class PhotoModal extends React.Component {
 
   navigateToUserProfile = () => {
     const username = this.props.photo.username;
-    this.props.toggle();
+    this.props.closeModal();
     if (this.props.location.pathname.slice(1) === username) {
       window.scrollTo(0, 0);
       this.props.history.push("/" + username);
@@ -78,7 +78,7 @@ class PhotoModal extends React.Component {
     return (
       <div className="PhotoModal">
         {photo && (
-          <Modal show={this.props.show} toggle={this.props.toggle}>
+          <Modal show={this.props.show} toggle={this.props.closeModal}>
             <i className="fas fa-times close-button" />
             <div className="left arrow">
               <i

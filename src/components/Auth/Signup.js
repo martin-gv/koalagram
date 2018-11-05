@@ -77,7 +77,6 @@ class Signup extends React.Component {
               <input
                 type="text"
                 className="form-control"
-                // required
                 name="profileImageUrl"
                 onChange={this.onChange}
               />

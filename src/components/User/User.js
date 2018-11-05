@@ -18,7 +18,8 @@ class User extends React.Component {
 
   render() {
     const { ready, tab } = this.state;
-    const { photos, storePhotos, user, currentUser } = this.props;
+    // total photo likes not working?!
+    const { storePhotos, user, currentUser } = this.props;
     const likes = ready && storePhotos.reduce((acc, cur) => acc + cur.likes, 0);
     const ownProfile = currentUser && currentUser.id === user.id && true;
 

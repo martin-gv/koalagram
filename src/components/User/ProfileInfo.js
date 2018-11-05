@@ -1,7 +1,8 @@
 import React from "react";
+import "./ProfileInfo.css";
 
 const ProfileInfo = props => (
-  <div>
+  <div className="ProfileInfo">
     <div className="row user-profile">
       <div className="col-4">
         <div
@@ -12,7 +13,10 @@ const ProfileInfo = props => (
         />
       </div>
       <div className="col-8">
-        <div className="username">{props.user.username}</div>
+        <div className="username">
+          {props.user.username}{" "}
+          <button className="btn btn-sm ml-3 edit">Edit</button>
+        </div>
         <div className="stats">
           <div className="photos">
             <strong>{props.storePhotos.length}</strong> photos

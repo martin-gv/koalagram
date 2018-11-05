@@ -1,10 +1,12 @@
 import React from "react";
 import { Link, withRouter } from "react-router-dom";
 import "./Navbar.css";
+import NewPhotoModal from "../NewPhotoModal/NewPhotoModal";
 
 class Navbar extends React.Component {
   state = {
-    search: ""
+    search: "",
+    showNewPhotoModal: false
   };
 
   onSubmitSearch = e => {
@@ -17,56 +19,77 @@ class Navbar extends React.Component {
     this.setState({ search: "" });
   };
 
+  openModal = e => {
+    e.preventDefault();
+    this.setState({ showNewPhotoModal: true });
+  };
+
+  closeModal = () => this.setState({ showNewPhotoModal: false });
+
   render() {
     const { currentUser } = this.props;
     return (
-      <nav className="navbar fixed-top navbar-dark bg-dark">
-        <div className="navbar-brand">
-          <Link to="/">Koalagram</Link>
-        </div>
-        <form className="form-inline" onSubmit={this.onSubmitSearch}>
-          <input
-            className="form-control hashtag-search"
-            type="text"
-            placeholder="Search"
-            value={this.state.search}
-            onChange={e => this.setState({ search: e.target.value })}
-          />
-        </form>
-        {currentUser ? (
-          <form className="form-inline">
-            <div className="logged-in">
-              Logged in as
-              <span className="current-user">
+      <div>
+        <nav className="navbar fixed-top navbar-dark bg-dark">
+          <div className="navbar-brand">
+            <Link to="/">Koalagram</Link>
+          </div>
+          <form className="form-inline" onSubmit={this.onSubmitSearch}>
+            <input
+              className="form-control hashtag-search"
+              type="text"
+              placeholder="Search"
+              value={this.state.search}
+              onChange={e => this.setState({ search: e.target.value })}
+            />
+          </form>
+          {currentUser ? (
+            <form className="form-inline" onSubmit={this.openModal}>
+              <button className="btn btn-sm btn-primary mr-2">
+                <i className="fas fa-camera mr-2" />
+                Post Photo
+              </button>
+              <div className="logged-in">
+                Logged in as
+                <span className="current-user">
+                  <Link to={"/" + currentUser.username}>
+                    {currentUser.username}
+                  </Link>
+                </span>
                 <Link to={"/" + currentUser.username}>
-                  {currentUser.username}
+                  <div
+                    className="photo profile"
+                    style={{
+                      backgroundImage:
+                        "url('" + currentUser.profile_image_url + "')"
+                    }}
+                  />
                 </Link>
-              </span>
-              <Link to={"/" + currentUser.username}>
-                <div
-                  className="photo profile"
-                  style={{
-                    backgroundImage:
-                      "url('" + currentUser.profile_image_url + "')"
-                  }}
-                />
+              </div>
+              <div className="nav-link logout" onClick={this.props.logout}>
+                Logout
+              </div>
+            </form>
+          ) : (
+            <form className="form-inline">
+              <Link className="nav-link" to="/login">
+                Login
               </Link>
-            </div>
-            <div className="nav-link logout" onClick={this.props.logout}>
-              Logout
-            </div>
-          </form>
-        ) : (
-          <form className="form-inline">
-            <Link className="nav-link" to="/login">
-              Login
-            </Link>
-            <Link className="btn btn-sm btn-primary" to="/signup">
-              Sign up
-            </Link>
-          </form>
+              <Link className="btn btn-sm btn-primary" to="/signup">
+                Sign up
+              </Link>
+            </form>
+          )}
+        </nav>
+        {this.state.showNewPhotoModal && (
+          <NewPhotoModal
+            show={this.state.showNewPhotoModal}
+            close={this.closeModal}
+            currentUser={currentUser}
+            addNewPhoto={this.props.addNewPhoto}
+          />
         )}
-      </nav>
+      </div>
     );
   }
 }

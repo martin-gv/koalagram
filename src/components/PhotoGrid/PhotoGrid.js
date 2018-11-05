@@ -136,14 +136,20 @@ class PhotoGrid extends React.Component {
   render() {
     let { selectedPhoto } = this.state;
     let { photos } = this.props;
-    let gridOfPhotos = photos.map(x => (
-      <div
-        className="col-4"
-        key={x.id}
-        style={{ backgroundImage: "url('" + x.image_url + "')" }}
-        onClick={this.openPhotoModal.bind(this, x)}
-      />
-    ));
+    let gridOfPhotos = photos.map(x => {
+      const formatToUrl = x.image_url.includes("http")
+        ? x.image_url
+        : "http://localhost:8080/" + x.image_url;
+      const imageUrl = formatToUrl.replace("\\", "/");
+      return (
+        <div
+          className="col-4"
+          key={x.id}
+          style={{ backgroundImage: `url("${imageUrl}")` }}
+          onClick={this.openPhotoModal.bind(this, x)}
+        />
+      );
+    });
     return (
       <div className="PhotoGrid">
         {selectedPhoto && (

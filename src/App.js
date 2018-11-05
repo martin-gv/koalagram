@@ -71,6 +71,12 @@ class App extends Component {
       .catch(err => console.log(err));
   };
 
+  addNewPhoto = photo => {
+    this.setState(state => {
+      return { photos: [photo, ...state.photos] };
+    });
+  };
+
   switchPhotos = type => {
     if (type === "likes") {
       this.setState(state => ({ storePhotos: state.photos }));
@@ -206,6 +212,7 @@ class App extends Component {
           currentUser={this.state.currentUser}
           logout={this.logout}
           fetchPhotosByHashtag={this.fetchPhotosByHashtag}
+          addNewPhoto={this.addNewPhoto}
         />
         <div className="container">
           {this.state.loginMessage && (

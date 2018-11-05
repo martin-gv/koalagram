@@ -70,6 +70,11 @@ class PhotoModal extends React.Component {
 
   render() {
     let { photo, userLikes } = this.props;
+    const formatToUrl =
+      photo && photo.image_url.includes("http")
+        ? photo.image_url
+        : "http://localhost:8080/" + photo.image_url;
+    const imageUrl = formatToUrl.replace("\\", "/");
     let userLikesThisPhoto =
       photo && Boolean(userLikes.find(x => x.photo_id === photo.id));
     let stateCopy = [...this.state.heartClasses];
@@ -91,7 +96,7 @@ class PhotoModal extends React.Component {
             <div className="modal-container" onClick={this.onClick}>
               <div
                 className="photo"
-                style={{ backgroundImage: "url('" + photo.image_url + "')" }}
+                style={{ backgroundImage: `url("${imageUrl}")` }}
               />
               <div className="sidebar">
                 <div className="user">

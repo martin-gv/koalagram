@@ -1,0 +1,44 @@
+.NewPhotoModal .modal-container {
+  width: 95%;
+  max-width: 350px;
+  background-color: #fff;
+  margin: auto;
+  box-shadow: 0 5px 15px 0 rgba(0, 0, 0, 0.2);
+  padding: 35px 30px;
+}
+
+.NewPhotoModal .modal-container h2 {
+  text-align: center;
+  font-family: "Lato";
+  font-size: 20px;
+}
+
+.NewPhotoModal .choose-image {
+  text-align: center;
+}
+
+.NewPhotoModal .choose-image label {
+  background-color: #888;
+  color: #fff;
+  cursor: pointer;
+  padding: 7px 15px;
+  border-radius: 5px;
+  font-size: 13px;
+}
+
+.NewPhotoModal .choose-image label:hover {
+  background-color: #777;
+}
+
+.NewPhotoModal .choose-image .selected-file {
+  margin-bottom: 10px;
+  font-size: 13px;
+}
+
+.NewPhotoModal .choose-image input {
+  display: none;
+}
+
+.NewPhotoModal #comment {
+  font-size: 13px;
+}

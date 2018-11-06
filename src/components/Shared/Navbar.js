@@ -28,6 +28,14 @@ class Navbar extends React.Component {
 
   render() {
     const { currentUser } = this.props;
+    let formatToUrl, imageUrl;
+    if (currentUser) {
+      formatToUrl = currentUser.profile_image_url.includes("http")
+        ? currentUser.profile_image_url
+        : "http://localhost:8080/" + currentUser.profile_image_url;
+      imageUrl = formatToUrl.replace("\\", "/");
+    }
+
     return (
       <div>
         <nav className="navbar fixed-top navbar-dark bg-dark">
@@ -45,7 +53,7 @@ class Navbar extends React.Component {
           </form>
           {currentUser ? (
             <form className="form-inline" onSubmit={this.openModal}>
-              <button className="btn btn-sm btn-primary mr-2">
+              <button className="btn btn-sm btn-primary mr-3">
                 <i className="fas fa-camera mr-2" />
                 Post Photo
               </button>
@@ -60,8 +68,7 @@ class Navbar extends React.Component {
                   <div
                     className="photo profile"
                     style={{
-                      backgroundImage:
-                        "url('" + currentUser.profile_image_url + "')"
+                      backgroundImage: "url('" + imageUrl + "')"
                     }}
                   />
                 </Link>

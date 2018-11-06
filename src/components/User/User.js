@@ -22,10 +22,15 @@ class User extends React.Component {
     const { storePhotos, user, currentUser } = this.props;
     const likes = ready && storePhotos.reduce((acc, cur) => acc + cur.likes, 0);
     const ownProfile = currentUser && currentUser.id === user.id && true;
+    const pathname = this.props.location.pathname;
 
     return (
       <div className="User">
-        {ready && <ProfileInfo {...{ storePhotos, user, likes }} />}
+        {ready && (
+          <ProfileInfo
+            {...{ storePhotos, user, likes, ownProfile, pathname }}
+          />
+        )}
         {ownProfile && (
           <TabNav
             switchPhotos={this.switchPhotos}

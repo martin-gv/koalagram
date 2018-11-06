@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Route, Switch, withRouter } from "react-router-dom";
+import { Route, Switch, Redirect, withRouter } from "react-router-dom";
 
 import "./App.css";
 import Navbar from "./components/Shared/Navbar";
@@ -9,6 +9,7 @@ import LoginMessage from "./components/Shared/LoginMessage";
 import PhotoGrid from "./components/PhotoGrid/PhotoGrid";
 import User from "./components/User/User";
 import { apiCall, setTokenHeader } from "./services/api";
+import EditProfile from "./components/User/EditProfile";
 
 class App extends Component {
   state = {
@@ -193,6 +194,12 @@ class App extends Component {
     console.log(res);
   };
 
+  updateCurrentUserProfileImage = image => {
+    this.setState(state => ({
+      currentUser: { ...state.currentUser, profile_image_url: image }
+    }));
+  };
+
   loginRequired = () => {
     this.setState({ errorMessage: "You must be logged in" });
     this.props.history.push("/login");
@@ -283,6 +290,24 @@ class App extends Component {
                   switchPhotos={this.switchPhotos}
                 />
               )}
+            />
+            <Route
+              path="/:username/edit"
+              exact
+              render={props =>
+                !this.state.currentUser ? (
+                  <Redirect to="/" />
+                ) : (
+                  <EditProfile
+                    {...props}
+                    user={this.state.user}
+                    updateUser={this.updateUser}
+                    updateCurrentUserProfileImage={
+                      this.updateCurrentUserProfileImage
+                    }
+                  />
+                )
+              }
             />
             <Route
               path="/"

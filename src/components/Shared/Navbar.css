@@ -2,8 +2,22 @@
   border-bottom: 1px solid #444444;
 }
 
+.navbar button.navbar-toggle:focus {
+  
+}
+
+.navbar .navbar-brand img {
+  width: 30px;
+  position: relative;
+  top: -3px;
+  margin-right: 8px;
+}
+
 .navbar .navbar-brand a {
   color: #eee;
+  font-family: "Lato", sans-serif;
+  text-transform: uppercase;
+  font-weight: 300;
   font-size: 1rem;
 }
 
@@ -24,7 +38,7 @@
 
 .navbar .logged-in {
   color: #ddd;
-  font-size: 13px;
+  font-size: 12px;
   display: flex;
   align-items: center;
 }
@@ -32,7 +46,8 @@
 .navbar .logged-in .current-user a {
   color: #fff;
   font-weight: 600;
-  margin: 0 12px 0 8px;
+  margin: 0 12px 0 6px;
+  font-size: 13px;
 }
 
 .navbar .logged-in .current-user a:hover {
@@ -65,4 +80,22 @@
 
 .navbar div.logout:hover {
   color: #0056b3;
+}
+
+@media (max-width: 768px) {
+  .navbar .hashtag-search {
+    margin-top: 20px;
+  }
+  
+  .navbar .post-photo {
+    margin-top: 20px;
+  }
+
+  .navbar .logged-in {
+    margin-top: 15px;
+  }
+
+  .navbar .logout {
+    margin-top: 5px;
+  }
 }

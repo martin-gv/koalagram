@@ -68,6 +68,13 @@ class PhotoModal extends React.Component {
     }
   };
 
+  formatImageUrl = imageUrl => {
+    const formatToUrl = imageUrl.includes("http")
+      ? imageUrl
+      : "http://localhost:8080/" + imageUrl;
+    return formatToUrl.replace("\\", "/");
+  };
+
   render() {
     let { photo, userLikes } = this.props;
     const formatToUrl =
@@ -80,6 +87,10 @@ class PhotoModal extends React.Component {
     let stateCopy = [...this.state.heartClasses];
     if (userLikesThisPhoto) stateCopy.push("user-likes");
     let heart = stateCopy.join(" ");
+
+    const profileImageUrl =
+      photo && this.formatImageUrl(photo.profile_image_url);
+
     return (
       <div className="PhotoModal">
         {photo && (
@@ -103,7 +114,7 @@ class PhotoModal extends React.Component {
                   <div
                     className="photo profile"
                     style={{
-                      backgroundImage: "url('" + photo.profile_image_url + "')"
+                      backgroundImage: `url("${profileImageUrl}")`
                     }}
                     onClick={this.navigateToUserProfile}
                   />
@@ -179,6 +190,12 @@ class PhotoModal extends React.Component {
                         onChange={this.onChange}
                         onKeyPress={this.handleTextSubmit}
                       />
+                      <label>
+                        {!this.props.photo.commentText
+                          ? 0
+                          : this.props.photo.commentText.length}
+                        /255 characters
+                      </label>
                       {this.props.photo.commentText &&
                         this.props.photo.commentText.length > 255 && (
                           <div

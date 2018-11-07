@@ -13,6 +13,11 @@ class NewPhotoModal extends React.Component {
     this.setState({ selectedFile });
   };
 
+  onChange = e => {
+    if (e.target.value.length > 255) return;
+    this.setState({ comment: e.target.value });
+  };
+
   handleSubmit = async e => {
     e.preventDefault();
     this.setState({ loading: true });
@@ -34,6 +39,8 @@ class NewPhotoModal extends React.Component {
     return (
       <div className="NewPhotoModal">
         <Modal show={true} toggle={this.props.close}>
+          <i className="fas fa-times close-button" />
+
           <div className="modal-container" onClick={e => e.stopPropagation()}>
             <h2>Post New Photo</h2>
             <hr />
@@ -53,15 +60,19 @@ class NewPhotoModal extends React.Component {
                 />
               </div>
               <div className="form-group">
-                <input
-                  type="text"
+                <textarea
                   className="form-control"
                   name="comment"
                   id="comment"
-                  placeholder="Caption"
+                  placeholder="Caption (optional)"
                   value={this.state.comment}
-                  onChange={e => this.setState({ comment: e.target.value })}
+                  onChange={this.onChange}
+                  rows="3"
                 />
+                <label>
+                  {this.state.comment.length}
+                  /255 characters
+                </label>
               </div>
               <button
                 className="btn btn-sm btn-block btn-primary"

@@ -2,12 +2,24 @@ import React from "react";
 import { Link, withRouter } from "react-router-dom";
 import "./Navbar.css";
 import NewPhotoModal from "../NewPhotoModal/NewPhotoModal";
+import {
+  Collapse,
+  Navbar as RSNavbar,
+  NavbarToggler,
+  NavbarBrand,
+  Nav,
+  NavItem,
+  NavLink
+} from "reactstrap";
 
 class Navbar extends React.Component {
   state = {
     search: "",
-    showNewPhotoModal: false
+    showNewPhotoModal: false,
+    collapsed: true
   };
+
+  toggleNavbar = () => this.setState({ collapsed: !this.state.collapsed });
 
   onSubmitSearch = e => {
     e.preventDefault();
@@ -20,8 +32,7 @@ class Navbar extends React.Component {
   };
 
   openModal = e => {
-    e.preventDefault();
-    this.setState({ showNewPhotoModal: true });
+    this.setState({ showNewPhotoModal: true, collapsed: true });
   };
 
   closeModal = () => this.setState({ showNewPhotoModal: false });
@@ -38,55 +49,87 @@ class Navbar extends React.Component {
 
     return (
       <div>
-        <nav className="navbar fixed-top navbar-dark bg-dark">
-          <div className="navbar-brand">
-            <Link to="/">Koalagram</Link>
+        <nav className="navbar fixed-top navbar-dark bg-dark navbar-expand-md">
+          <div
+            className="navbar-brand"
+            onClick={() => this.setState({ collapsed: true })}
+          >
+            <Link to="/">
+              <img src="/koalagram.png" alt="Koalagram Logo" />
+              Koalagram
+            </Link>
           </div>
-          <form className="form-inline" onSubmit={this.onSubmitSearch}>
-            <input
-              className="form-control hashtag-search"
-              type="text"
-              placeholder="Search"
-              value={this.state.search}
-              onChange={e => this.setState({ search: e.target.value })}
-            />
-          </form>
-          {currentUser ? (
-            <form className="form-inline" onSubmit={this.openModal}>
-              <button className="btn btn-sm btn-primary mr-3">
-                <i className="fas fa-camera mr-2" />
-                Post Photo
-              </button>
-              <div className="logged-in">
-                Logged in as
-                <span className="current-user">
-                  <Link to={"/" + currentUser.username}>
-                    {currentUser.username}
-                  </Link>
-                </span>
-                <Link to={"/" + currentUser.username}>
-                  <div
-                    className="photo profile"
-                    style={{
-                      backgroundImage: "url('" + imageUrl + "')"
-                    }}
+          <NavbarToggler onClick={this.toggleNavbar} className="mr-2" />
+          <Collapse isOpen={!this.state.collapsed} navbar>
+            <Nav className="ml-auto" navbar>
+              <NavItem>
+                <form className="form-inline" onSubmit={this.onSubmitSearch}>
+                  <input
+                    style={{ marginRight: 20 }}
+                    className="form-control hashtag-search"
+                    type="text"
+                    placeholder="Search"
+                    value={this.state.search}
+                    onChange={e => this.setState({ search: e.target.value })}
                   />
-                </Link>
-              </div>
-              <div className="nav-link logout" onClick={this.props.logout}>
-                Logout
-              </div>
-            </form>
-          ) : (
-            <form className="form-inline">
-              <Link className="nav-link" to="/login">
-                Login
-              </Link>
-              <Link className="btn btn-sm btn-primary" to="/signup">
-                Sign up
-              </Link>
-            </form>
-          )}
+                </form>
+              </NavItem>
+              {currentUser && (
+                <NavItem>
+                  <button
+                    className="btn btn-sm btn-primary mr-3 post-photo"
+                    onClick={this.openModal}
+                  >
+                    <i className="fas fa-camera mr-2" />
+                    Post Photo
+                  </button>
+                </NavItem>
+              )}
+              {currentUser && (
+                <NavItem>
+                  <div className="logged-in">
+                    Logged in as
+                    <span
+                      className="current-user"
+                      onClick={() => this.setState({ collapsed: true })}
+                    >
+                      <Link to={"/" + currentUser.username}>
+                        {currentUser.username}
+                      </Link>
+                    </span>
+                    <Link to={"/" + currentUser.username}>
+                      <div
+                        className="photo profile"
+                        style={{ backgroundImage: "url('" + imageUrl + "')" }}
+                        onClick={() => this.setState({ collapsed: true })}
+                      />
+                    </Link>
+                  </div>
+                </NavItem>
+              )}
+              {currentUser && (
+                <NavItem onClick={() => this.setState({ collapsed: true })}>
+                  <div className="nav-link logout" onClick={this.props.logout}>
+                    Logout
+                  </div>
+                </NavItem>
+              )}
+              {!currentUser && (
+                <NavItem onClick={() => this.setState({ collapsed: true })}>
+                  <Link className="nav-link" to="/login">
+                    Login
+                  </Link>
+                </NavItem>
+              )}
+              {!currentUser && (
+                <NavItem onClick={() => this.setState({ collapsed: true })}>
+                  <Link className="btn btn-sm btn-primary" to="/signup">
+                    Sign up
+                  </Link>
+                </NavItem>
+              )}
+            </Nav>
+          </Collapse>
         </nav>
         {this.state.showNewPhotoModal && (
           <NewPhotoModal

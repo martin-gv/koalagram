@@ -18,6 +18,7 @@ class User extends React.Component {
 
   render() {
     const { ready, tab } = this.state;
+
     // total photo likes not working?!
     const { storePhotos, user, currentUser } = this.props;
     const likes = ready && storePhotos.reduce((acc, cur) => acc + cur.likes, 0);
@@ -26,11 +27,14 @@ class User extends React.Component {
 
     return (
       <div className="User">
-        {ready && (
-          <ProfileInfo
-            {...{ storePhotos, user, likes, ownProfile, pathname }}
-          />
-        )}
+        {ready &&
+          (user.id ? (
+            <ProfileInfo
+              {...{ storePhotos, user, likes, ownProfile, pathname }}
+            />
+          ) : (
+            <h5 style={{ textAlign: "center" }}>No user found</h5>
+          ))}
         {ownProfile && (
           <TabNav
             switchPhotos={this.switchPhotos}
@@ -38,7 +42,6 @@ class User extends React.Component {
             currentUser={currentUser}
           />
         )}
-        {/* {tab === "photos" ? <div>Photos!</div> : <div>Likes!</div>} */}
         <PhotoGrid
           fetchPhotos={this.props.fetchPhotos}
           fetchPhotosLikedByUser={this.props.fetchPhotosLikedByUser}

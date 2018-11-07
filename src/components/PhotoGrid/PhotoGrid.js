@@ -71,6 +71,7 @@ class PhotoGrid extends React.Component {
     // get photos liked by user on autologin
     if (
       currentUser !== prevProps.currentUser &&
+      currentUser &&
       currentUser.username === username
     )
       await this.props.fetchPhotosLikedByUser(username);
@@ -103,6 +104,8 @@ class PhotoGrid extends React.Component {
 
   closeModal = () => {
     this.setState({ photoModal: false, selectedPhoto: undefined });
+    const { pathname } = this.props.location;
+    this.props.history.push(pathname);
   };
 
   openPhotoModal = photo => {
@@ -171,13 +174,18 @@ class PhotoGrid extends React.Component {
           />
         )}
         {this.state.ready &&
-          this.props.match.params.hashtag && (
+          this.props.match.params.hashtag &&
+          (this.props.photos.length ? (
             <HashtagHeader
               randomPhoto={this.randomPhoto}
               hashtag={this.props.match.params.hashtag}
               totalPhotos={this.props.photos.length}
             />
-          )}
+          ) : (
+            <h5 style={{ textAlign: "center" }}>
+              No photos with #{this.props.match.params.hashtag}
+            </h5>
+          ))}
         <div className="row photo-grid">{this.state.ready && gridOfPhotos}</div>
       </div>
     );

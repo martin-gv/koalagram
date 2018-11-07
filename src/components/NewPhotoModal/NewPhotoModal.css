@@ -8,13 +8,8 @@
 }
 
 .NewPhotoModal .modal-container h2 {
-  text-align: center;
   font-family: "Lato";
   font-size: 20px;
-}
-
-.NewPhotoModal .choose-image {
-  text-align: center;
 }
 
 .NewPhotoModal .choose-image label {
@@ -36,9 +31,33 @@
 }
 
 .NewPhotoModal .choose-image input {
-  display: none;
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  position: absolute;
 }
 
 .NewPhotoModal #comment {
   font-size: 13px;
+}
+
+.NewPhotoModal #comment + label {
+  float: right;
+  color: #aaaaaa;
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+
+.NewPhotoModal .close-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 2.5em;
+  margin: 0.25em;
+  cursor: pointer;
+}
+
+.NewPhotoModal i.close-button:hover {
+  color: rgba(255, 255, 255, 0.65);
 }

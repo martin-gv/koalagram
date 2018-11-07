@@ -81,7 +81,12 @@ class App extends Component {
   switchPhotos = type => {
     if (type === "likes") {
       this.setState(state => ({ storePhotos: state.photos }));
-      this.setState(state => ({ photos: state.photosLikedByUser }));
+      this.setState(state => {
+        const onlyCurrentLikes = state.photosLikedByUser.filter(x =>
+          Boolean(state.currentUser.likes.find(y => y.photo_id === x.id))
+        );
+        return { photos: onlyCurrentLikes };
+      });
     } else if (type === "photos") {
       this.setState(state => ({ photosLikedByUser: state.photos }));
       this.setState(state => ({ photos: state.storePhotos }));
@@ -209,6 +214,7 @@ class App extends Component {
     localStorage.clear();
     setTokenHeader(false);
     this.setState({ currentUser: undefined });
+    this.props.history.push("/");
     // to do: clear logged in user message?
   };
 

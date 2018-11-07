@@ -1,5 +1,6 @@
 import React from "react";
 import { apiCall, setTokenHeader } from "../../services/api";
+import "./Signup.css";
 
 class Signup extends React.Component {
   state = {
@@ -7,7 +8,8 @@ class Signup extends React.Component {
     profileImageUrl: "",
     password: "",
     confirmPassword: "",
-    passwordsDoNotMatch: false
+    passwordsDoNotMatch: false,
+    selectedFile: undefined
   };
 
   onChange = e => {
@@ -18,6 +20,12 @@ class Signup extends React.Component {
     });
   };
 
+  fileInput = React.createRef();
+  handleFileChange = e => {
+    const selectedFile = e.target.files[0];
+    this.setState({ selectedFile });
+  };
+
   checkIfPasswordsMatch = () => {
     const { password, confirmPassword } = this.state;
     if (password === confirmPassword)
@@ -26,12 +34,22 @@ class Signup extends React.Component {
 
   signup = e => {
     e.preventDefault();
-    const { username, profileImageUrl, password, confirmPassword } = this.state;
+    const {
+      username,
+      profileImageUrl,
+      password,
+      confirmPassword,
+      selectedFile
+    } = this.state;
     if (password !== confirmPassword) {
       this.setState({ passwordsDoNotMatch: true });
     } else {
-      const user = { username, profileImageUrl, password };
-      apiCall("post", "/api/auth/signup", { user })
+      const formData = new FormData();
+      if (selectedFile)
+        formData.append("imageFile", selectedFile, selectedFile.name);
+      formData.append("username", username);
+      formData.append("password", password);
+      apiCall("post", "/api/auth/signup", formData)
         .then(res => {
           localStorage.setItem("jwtToken", res.token);
           setTokenHeader(res.token);
@@ -51,7 +69,7 @@ class Signup extends React.Component {
   render() {
     return (
       <div
-        className="card"
+        className="card Signup"
         style={{ maxWidth: 400, margin: "auto", marginTop: 100 }}
       >
         <div className="card-body">
@@ -72,13 +90,18 @@ class Signup extends React.Component {
                 onChange={this.onChange}
               />
             </div>
-            <div className="form-group">
-              <label>Profile Image URL (optional)</label>
+            <div className="form-group choose-image">
+              <div className="title">Profile Image (optional)</div>
+              <div className="selected-file">
+                {this.state.selectedFile && this.state.selectedFile.name}
+              </div>
+              <label htmlFor="image">Choose File</label>
               <input
-                type="text"
-                className="form-control"
-                name="profileImageUrl"
-                onChange={this.onChange}
+                type="file"
+                className="form-control-file"
+                id="image"
+                ref={this.fileInput}
+                onChange={this.handleFileChange}
               />
             </div>
             <div className="form-group">
@@ -109,7 +132,7 @@ class Signup extends React.Component {
                     marginTop: "0.5rem"
                   }}
                 >
-                  Password does not match
+                  Passwords do not match
                 </div>
               )}
             </div>

@@ -1,4 +1,14 @@
+.ProfileInfo {
+  padding-top: 30px;
+}
+
 .ProfileInfo .edit {
   font-size: 13px;
   padding: 1px 9px;
+}
+
+@media (max-width: 768px) {
+  .ProfileInfo {
+    padding-top: 15px;
+  }
 }

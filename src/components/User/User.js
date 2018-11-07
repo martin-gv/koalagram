@@ -18,10 +18,10 @@ class User extends React.Component {
 
   render() {
     const { ready, tab } = this.state;
-
-    // total photo likes not working?!
-    const { storePhotos, user, currentUser } = this.props;
-    const likes = ready && storePhotos.reduce((acc, cur) => acc + cur.likes, 0);
+    const { photos, user, currentUser, storePhotos } = this.props;
+    const userPhotos = ready && tab === "photos" ? photos : storePhotos;
+    const likes = ready && userPhotos.reduce((acc, cur) => acc + cur.likes, 0);
+    const totalPhotos = tab === "photos" ? photos.length : storePhotos.length;
     const ownProfile = currentUser && currentUser.id === user.id && true;
     const pathname = this.props.location.pathname;
 
@@ -30,7 +30,7 @@ class User extends React.Component {
         {ready &&
           (user.id ? (
             <ProfileInfo
-              {...{ storePhotos, user, likes, ownProfile, pathname }}
+              {...{ user, likes, ownProfile, pathname, totalPhotos }}
             />
           ) : (
             <h5 style={{ textAlign: "center" }}>No user found</h5>

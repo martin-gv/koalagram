@@ -3,5 +3,13 @@
 }
 
 .App .container {
-  margin-top: 8em;
+  margin-top: 80px;
 }
+
+
+@media (max-width: 768px) {
+  .App .container {
+    margin-top: 60px;
+  }
+}
+

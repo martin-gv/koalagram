@@ -1,0 +1,29 @@
+.Signup .choose-image .title {
+  font-size: 13px;
+  margin-top: 20px;
+}
+
+.Signup .choose-image label {
+  background-color: #888;
+  color: #fff;
+  cursor: pointer;
+  padding: 7px 15px;
+  border-radius: 5px;
+  font-size: 13px;
+}
+
+.Signup .choose-image label:hover {
+  background-color: #777;
+}
+
+.Signup .choose-image .selected-file {
+  margin-bottom: 10px;
+  font-size: 13px;
+}
+
+.Signup .choose-image input {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  position: absolute;
+}

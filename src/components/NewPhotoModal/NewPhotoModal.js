@@ -1,4 +1,5 @@
 import React from "react";
+import { withRouter } from "react-router-dom";
 import { apiCall } from "../../services/api";
 import "./NewPhotoModal.css";
 import Modal from "../Shared/Modal";
@@ -29,7 +30,8 @@ class NewPhotoModal extends React.Component {
     formData.append("comment", comment);
     formData.append("id", id);
     const res = await apiCall("post", "/api/users/" + username, formData);
-    this.props.addNewPhoto(res.newPhoto);
+    // this.props.addNewPhoto(res.newPhoto);
+    this.props.history.push("/");
 
     this.setState({ selectedFile: undefined, comment: "", loading: false });
     this.props.close();
@@ -88,4 +90,4 @@ class NewPhotoModal extends React.Component {
   }
 }
 
-export default NewPhotoModal;
+export default withRouter(NewPhotoModal);

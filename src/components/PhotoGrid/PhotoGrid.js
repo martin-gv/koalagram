@@ -142,7 +142,7 @@ class PhotoGrid extends React.Component {
     let gridOfPhotos = photos.map(x => {
       const formatToUrl = x.image_url.includes("http")
         ? x.image_url
-        : "http://localhost:8080/" + x.image_url;
+        : "https://koalagram-server.herokuapp.com/" + x.image_url;
       const imageUrl = formatToUrl.replace("\\", "/");
       return (
         <div

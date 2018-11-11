@@ -9,10 +9,22 @@ class NewPhotoModal extends React.Component {
   state = { selectedFile: undefined, comment: "", loading: false };
 
   fileInput = React.createRef();
-  handleFileChange = e => {
+  handleFileChange = async e => {
     const selectedFile = e.target.files[0];
-    this.setState({ selectedFile });
+    console.log(selectedFile);
+    const { signedRequest, url } = await apiCall("get", "/api/file-upload", {
+      params: {
+        fileName: selectedFile.name,
+        fileType: selectedFile.type
+      }
+    });
+    const res = await apiCall("put", signedRequest);
+    console.log(res, url);
+
+    // this.setState({ selectedFile });
   };
+
+  getSignedRequest = file => {};
 
   onChange = e => {
     if (e.target.value.length > 255) return;
@@ -29,7 +41,7 @@ class NewPhotoModal extends React.Component {
     formData.append("imageFile", selectedFile, selectedFile.name);
     formData.append("comment", comment);
     formData.append("id", id);
-    const res = await apiCall("post", "/api/users/" + username, formData);
+    await apiCall("post", "/api/users/" + username, formData);
     // this.props.addNewPhoto(res.newPhoto);
     this.props.history.push("/");
 

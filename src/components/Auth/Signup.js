@@ -34,13 +34,7 @@ class Signup extends React.Component {
 
   signup = e => {
     e.preventDefault();
-    const {
-      username,
-      profileImageUrl,
-      password,
-      confirmPassword,
-      selectedFile
-    } = this.state;
+    const { username, password, confirmPassword, selectedFile } = this.state;
     if (password !== confirmPassword) {
       this.setState({ passwordsDoNotMatch: true });
     } else {

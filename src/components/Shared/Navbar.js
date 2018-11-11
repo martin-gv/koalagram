@@ -2,15 +2,7 @@ import React from "react";
 import { Link, withRouter } from "react-router-dom";
 import "./Navbar.css";
 import NewPhotoModal from "../NewPhotoModal/NewPhotoModal";
-import {
-  Collapse,
-  Navbar as RSNavbar,
-  NavbarToggler,
-  NavbarBrand,
-  Nav,
-  NavItem,
-  NavLink
-} from "reactstrap";
+import { Collapse, NavbarToggler, Nav, NavItem } from "reactstrap";
 
 class Navbar extends React.Component {
   state = {

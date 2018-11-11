@@ -12,6 +12,34 @@
   font-size: 20px;
 }
 
+.NewPhotoModal .photo {
+  float: left;
+  position: relative;
+  width: 65%;
+  padding-bottom: 65%;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  flex: 0 0 auto;
+  margin-bottom: 15px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.NewPhotoModal .photo::after {
+  content: "";
+  transition: background-color 100ms ease-out;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+}
+
+.NewPhotoModal .photo:hover::after {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
 .NewPhotoModal .choose-image label {
   background-color: #888;
   color: #fff;
@@ -28,6 +56,7 @@
 .NewPhotoModal .choose-image .selected-file {
   margin-bottom: 10px;
   font-size: 13px;
+  display: none;
 }
 
 .NewPhotoModal .choose-image input {

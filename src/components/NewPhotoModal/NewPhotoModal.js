@@ -5,26 +5,58 @@ import "./NewPhotoModal.css";
 import Modal from "../Shared/Modal";
 import ButtonSpinner from "../Shared/ButtonSpinner";
 
-class NewPhotoModal extends React.Component {
-  state = { selectedFile: undefined, comment: "", loading: false };
+const placeholderImg = "/placeholder.png";
 
+class NewPhotoModal extends React.Component {
+  state = {
+    selectedFile: undefined,
+    comment: "",
+    imageUrl: "",
+    loading: false,
+    uploading: false,
+    buttonDisabled: true,
+    submitPressed: false
+  };
   fileInput = React.createRef();
+
   handleFileChange = async e => {
     const selectedFile = e.target.files[0];
-    console.log(selectedFile);
+    this.setState({ buttonDisabled: false, uploading: true, selectedFile });
     const { signedRequest, url } = await apiCall("get", "/api/file-upload", {
       params: {
         fileName: selectedFile.name,
         fileType: selectedFile.type
       }
     });
-    const res = await apiCall("put", signedRequest);
-    console.log(res, url);
+    await this.uploadFile(selectedFile, signedRequest);
+    this.setState({ uploading: false, imageUrl: url });
+    if (this.state.submitPressed) this.postNewPhoto();
 
-    // this.setState({ selectedFile });
+    // set remote url as image preview?
+    // set url of uploaded file for posting to db
+    // set local name of file for showing on front end
   };
 
-  getSignedRequest = file => {};
+  uploadFile = (file, signedRequest, url) => {
+    return new Promise(function(resolve, reject) {
+      const xhr = new XMLHttpRequest();
+      xhr.open("PUT", signedRequest);
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            resolve(xhr.response);
+          } else {
+            alert("Could not upload file.");
+            reject({
+              status: this.status,
+              statusText: xhr.statusText
+            });
+          }
+        }
+      };
+      xhr.send(file);
+    });
+  };
 
   onChange = e => {
     if (e.target.value.length > 255) return;
@@ -33,20 +65,20 @@ class NewPhotoModal extends React.Component {
 
   handleSubmit = async e => {
     e.preventDefault();
-    this.setState({ loading: true });
+    this.setState({ submitPressed: true, buttonDisabled: true, loading: true });
+    if (this.state.imageUrl) this.postNewPhoto();
+  };
 
-    const { selectedFile, comment } = this.state;
-    const { id, username } = this.props.currentUser;
-    const formData = new FormData();
-    formData.append("imageFile", selectedFile, selectedFile.name);
-    formData.append("comment", comment);
-    formData.append("id", id);
-    await apiCall("post", "/api/users/" + username, formData);
-    // this.props.addNewPhoto(res.newPhoto);
+  postNewPhoto = async () => {
+    const { imageUrl, comment } = this.state;
+    const { username } = this.props.currentUser;
+    const res = await apiCall("post", "/api/users/" + username, {
+      imageUrl,
+      comment
+    });
     this.props.history.push("/");
-
-    this.setState({ selectedFile: undefined, comment: "", loading: false });
     this.props.close();
+    this.props.addNewPhoto(res.newPhoto);
   };
 
   render() {
@@ -60,6 +92,15 @@ class NewPhotoModal extends React.Component {
             <hr />
             <form onSubmit={this.handleSubmit}>
               <div className="form-group choose-image">
+                <div
+                  className="photo"
+                  style={{
+                    backgroundImage: `url("${
+                      this.state.imageUrl ? this.state.imageUrl : placeholderImg
+                    }")`
+                  }}
+                  onClick={() => this.fileInput.current.click()}
+                />
                 <div className="selected-file">
                   {this.state.selectedFile && this.state.selectedFile.name}
                 </div>
@@ -90,9 +131,9 @@ class NewPhotoModal extends React.Component {
               </div>
               <button
                 className="btn btn-sm btn-block btn-primary"
-                disabled={this.state.loading}
+                disabled={this.state.buttonDisabled}
               >
-                Submit {this.state.loading && <ButtonSpinner />}
+                Post Photo {this.state.loading && <ButtonSpinner />}
               </button>
             </form>
           </div>

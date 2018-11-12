@@ -100,7 +100,10 @@ class NewPhotoModal extends React.Component {
                 <div className="selected-file">
                   {this.state.selectedFile && this.state.selectedFile.name}
                 </div>
-                <label htmlFor="image">Choose Image File</label>
+                <label htmlFor="image">
+                  Choose Image File
+                  {this.state.uploading && <ButtonSpinner />}
+                </label>
                 <input
                   type="file"
                   className="form-control-file"

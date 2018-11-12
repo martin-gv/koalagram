@@ -4,12 +4,11 @@
 
 .App .container {
   margin-top: 80px;
+  max-width: 950px;
 }
-
 
 @media (max-width: 768px) {
   .App .container {
     margin-top: 60px;
   }
 }
-

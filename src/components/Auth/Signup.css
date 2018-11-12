@@ -1,6 +1,17 @@
+.Signup .photo.profile {
+  width: 100px;
+  padding-bottom: 100px;
+  position: relative;
+  background-color: gainsboro;
+  border-radius: 100%;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
 .Signup .choose-image .title {
   font-size: 13px;
-  margin-top: 20px;
+  margin: 10px 0;
 }
 
 .Signup .choose-image label {

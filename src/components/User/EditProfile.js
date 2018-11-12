@@ -45,20 +45,21 @@ class EditProfile extends React.Component {
   };
 
   render() {
-    const formatToUrl = this.props.user.profile_image_url.includes("http")
+    const imageUrl = this.props.user
       ? this.props.user.profile_image_url
-      : "http://localhost:8080/" + this.props.user.profile_image_url;
-    const imageUrl = formatToUrl.replace("\\", "/");
+        ? this.props.user.profile_image_url
+        : "/doge.jpg"
+      : "";
 
     const imageStyle = this.state.loadingImage
       ? {}
       : this.state.localImage
-        ? { backgroundImage: "url('" + this.state.localImage + "')" }
-        : this.props.user
-          ? {
-              backgroundImage: "url('" + imageUrl + "')"
-            }
-          : {};
+      ? { backgroundImage: "url('" + this.state.localImage + "')" }
+      : this.props.user
+      ? {
+          backgroundImage: "url('" + imageUrl + "')"
+        }
+      : {};
 
     return (
       <div className="EditProfile">

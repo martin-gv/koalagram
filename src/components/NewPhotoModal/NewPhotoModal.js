@@ -31,13 +31,9 @@ class NewPhotoModal extends React.Component {
     await this.uploadFile(selectedFile, signedRequest);
     this.setState({ uploading: false, imageUrl: url });
     if (this.state.submitPressed) this.postNewPhoto();
-
-    // set remote url as image preview?
-    // set url of uploaded file for posting to db
-    // set local name of file for showing on front end
   };
 
-  uploadFile = (file, signedRequest, url) => {
+  uploadFile = (file, signedRequest) => {
     return new Promise(function(resolve, reject) {
       const xhr = new XMLHttpRequest();
       xhr.open("PUT", signedRequest);

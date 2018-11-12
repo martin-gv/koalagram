@@ -31,13 +31,12 @@ class Navbar extends React.Component {
 
   render() {
     const { currentUser } = this.props;
-    let formatToUrl, imageUrl;
-    if (currentUser) {
-      formatToUrl = currentUser.profile_image_url.includes("http")
+
+    const profileImageUrl = currentUser
+      ? currentUser.profile_image_url
         ? currentUser.profile_image_url
-        : "http://localhost:8080/" + currentUser.profile_image_url;
-      imageUrl = formatToUrl.replace("\\", "/");
-    }
+        : "/doge.jpg"
+      : "";
 
     return (
       <div>
@@ -92,7 +91,7 @@ class Navbar extends React.Component {
                     <Link to={"/" + currentUser.username}>
                       <div
                         className="photo profile"
-                        style={{ backgroundImage: "url('" + imageUrl + "')" }}
+                        style={{ backgroundImage: `url("${profileImageUrl}")` }}
                         onClick={() => this.setState({ collapsed: true })}
                       />
                     </Link>

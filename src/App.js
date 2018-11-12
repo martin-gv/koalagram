@@ -127,12 +127,12 @@ class App extends Component {
           // User currently likes photo
           updatedLikes = currentUser.likes.filter(x => x.photo_id !== photo.id);
           totalLikeChange = -1;
-          newTimer = setTimeout(() => this.removePhotoLike(photo.id), 500);
+          newTimer = setTimeout(() => this.removePhotoLike(photo.id), 300);
         } else {
           // User currently does NOT like photo
           updatedLikes = [...currentUser.likes, { photo_id: photo.id }];
           totalLikeChange = 1;
-          newTimer = setTimeout(() => this.addPhotoLike(photo), 500);
+          newTimer = setTimeout(() => this.addPhotoLike(photo), 300);
         }
         let findPhoto = state.photos.find(x => x.id === photo.id);
         let photoIndex = state.photos.indexOf(findPhoto);

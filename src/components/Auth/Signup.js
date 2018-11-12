@@ -1,6 +1,7 @@
 import React from "react";
 import { apiCall, setTokenHeader } from "../../services/api";
 import "./Signup.css";
+import ButtonSpinner from "../Shared/ButtonSpinner";
 
 class Signup extends React.Component {
   state = {
@@ -9,7 +10,8 @@ class Signup extends React.Component {
     password: "",
     confirmPassword: "",
     passwordsDoNotMatch: false,
-    selectedFile: undefined
+    uploading: false,
+    submitting: false
   };
 
   onChange = e => {
@@ -21,9 +23,39 @@ class Signup extends React.Component {
   };
 
   fileInput = React.createRef();
-  handleFileChange = e => {
+
+  handleFileChange = async e => {
     const selectedFile = e.target.files[0];
-    this.setState({ selectedFile });
+    this.setState({ uploading: true, profileImageUrl: "" });
+    const { signedRequest, url } = await apiCall("get", "/api/file-upload", {
+      params: {
+        fileName: selectedFile.name,
+        fileType: selectedFile.type
+      }
+    });
+    await this.uploadFile(selectedFile, signedRequest);
+    this.setState({ profileImageUrl: url, uploading: false });
+  };
+
+  uploadFile = (file, signedRequest) => {
+    return new Promise(function(resolve, reject) {
+      const xhr = new XMLHttpRequest();
+      xhr.open("PUT", signedRequest);
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            resolve(xhr.response);
+          } else {
+            alert("Could not upload file.");
+            reject({
+              status: this.status,
+              statusText: xhr.statusText
+            });
+          }
+        }
+      };
+      xhr.send(file);
+    });
   };
 
   checkIfPasswordsMatch = () => {
@@ -34,30 +66,25 @@ class Signup extends React.Component {
 
   signup = e => {
     e.preventDefault();
-    const { username, password, confirmPassword, selectedFile } = this.state;
-    if (password !== confirmPassword) {
-      this.setState({ passwordsDoNotMatch: true });
-    } else {
-      const formData = new FormData();
-      if (selectedFile)
-        formData.append("imageFile", selectedFile, selectedFile.name);
-      formData.append("username", username);
-      formData.append("password", password);
-      apiCall("post", "/api/auth/signup", formData)
-        .then(res => {
-          localStorage.setItem("jwtToken", res.token);
-          setTokenHeader(res.token);
-          this.props.setCurrentUser(res.user);
-          this.props.history.push("/");
-        })
-        .catch(err => {
-          if (err.message.includes("ER_DUP_ENTRY")) {
-            this.props.setErrorMessage("That username is already taken");
-          } else {
-            this.props.setErrorMessage(err.message);
-          }
-        });
-    }
+    const { username, password, confirmPassword, profileImageUrl } = this.state;
+    if (password !== confirmPassword)
+      return this.setState({ passwordsDoNotMatch: true });
+    this.setState({ submitting: true });
+    apiCall("post", "/api/auth/signup", { username, password, profileImageUrl })
+      .then(res => {
+        localStorage.setItem("jwtToken", res.token);
+        setTokenHeader(res.token);
+        this.props.setCurrentUser(res.user);
+        this.props.location.hash = "";
+        this.props.history.push("/");
+      })
+      .catch(err => {
+        if (err.message.includes("ER_DUP_ENTRY")) {
+          this.props.setErrorMessage("That username is already taken");
+        } else {
+          this.props.setErrorMessage(err.message);
+        }
+      });
   };
 
   render() {
@@ -85,11 +112,17 @@ class Signup extends React.Component {
               />
             </div>
             <div className="form-group choose-image">
+              <div
+                className="photo profile"
+                style={{
+                  backgroundImage: `url("${this.state.profileImageUrl}")`
+                }}
+              />
               <div className="title">Profile Image (optional)</div>
-              <div className="selected-file">
-                {this.state.selectedFile && this.state.selectedFile.name}
-              </div>
-              <label htmlFor="image">Choose File</label>
+              <label htmlFor="image">
+                Choose File
+                {this.state.uploading && <ButtonSpinner />}
+              </label>
               <input
                 type="file"
                 className="form-control-file"
@@ -130,8 +163,13 @@ class Signup extends React.Component {
                 </div>
               )}
             </div>
-            <button type="submit" className="btn btn-primary">
+            <button
+              type="submit"
+              className="btn btn-primary"
+              disabled={this.state.uploading}
+            >
               Submit
+              {this.state.submitting && <ButtonSpinner />}
             </button>
           </form>
         </div>

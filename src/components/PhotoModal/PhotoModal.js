@@ -88,8 +88,11 @@ class PhotoModal extends React.Component {
     if (userLikesThisPhoto) stateCopy.push("user-likes");
     let heart = stateCopy.join(" ");
 
-    const profileImageUrl =
-      photo && this.formatImageUrl(photo.profile_image_url);
+    const profileImageUrl = photo
+      ? photo.profile_image_url
+        ? photo.profile_image_url
+        : "/doge.jpg"
+      : "";
 
     return (
       <div className="PhotoModal">

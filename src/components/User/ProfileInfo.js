@@ -3,10 +3,12 @@ import { Link } from "react-router-dom";
 import "./ProfileInfo.css";
 
 const ProfileInfo = props => {
-  const formatToUrl = props.user.profile_image_url.includes("http")
+  const imageUrl = props.user
     ? props.user.profile_image_url
-    : "http://localhost:8080/" + props.user.profile_image_url;
-  const imageUrl = formatToUrl.replace("\\", "/");
+      ? props.user.profile_image_url
+      : "/doge.jpg"
+    : "";
+
   return (
     <div className="ProfileInfo">
       <div className="row user-profile">
@@ -21,11 +23,11 @@ const ProfileInfo = props => {
         <div className="col-8">
           <div className="username">
             {props.user.username}{" "}
-            {props.ownProfile && (
+            {/* {props.ownProfile && (
               <Link to={props.pathname + "/edit"}>
                 <button className="btn btn-sm ml-3 edit">Edit</button>
               </Link>
-            )}
+            )} */}
           </div>
           <div className="stats">
             <div className="photos">

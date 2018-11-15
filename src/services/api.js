@@ -19,3 +19,24 @@ export function apiCall(method, path, data) {
       });
   });
 }
+
+export function uploadFile(file, signedRequest) {
+  return new Promise(function(resolve, reject) {
+    const xhr = new XMLHttpRequest();
+    xhr.open("PUT", signedRequest);
+    xhr.onreadystatechange = () => {
+      if (xhr.readyState === 4) {
+        if (xhr.status === 200) {
+          resolve(xhr.response);
+        } else {
+          alert("Could not upload file.");
+          reject({
+            status: this.status,
+            statusText: xhr.statusText
+          });
+        }
+      }
+    };
+    xhr.send(file);
+  });
+}

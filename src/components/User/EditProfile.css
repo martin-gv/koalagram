@@ -1,3 +1,10 @@
+.EditProfile > .card {
+  max-width: 600px;
+  margin: auto;
+  margin-top: 100px;
+  margin-bottom: 40px;
+}
+
 .EditProfile .photo.profile {
   width: 100px;
   padding-bottom: 100px;
@@ -7,6 +14,7 @@
   background-repeat: no-repeat;
   background-size: cover;
   margin-bottom: 10px;
+  background-color: gainsboro;
 }
 
 .EditProfile .choose-image label {

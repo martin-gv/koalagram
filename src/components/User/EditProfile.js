@@ -1,26 +1,31 @@
 import React from "react";
-import { apiCall } from "../../services/api";
+import { apiCall, uploadFile } from "../../services/api";
 import "./EditProfile.css";
+import ButtonSpinner from "../Shared/ButtonSpinner";
 
 class EditProfile extends React.Component {
   state = {
-    selectedFile: undefined,
-    loadingImage: false,
-    localImage: undefined,
     bio: this.props.user.bio || "",
     currentPassword: "",
     newPassword: "",
-    confirmNewPassword: ""
+    confirmNewPassword: "",
+    uploading: false,
+    imageUrl: ""
   };
 
   fileInput = React.createRef();
-  handleFileChange = e => {
-    this.setState({ loadingImage: true, selectedFile: e.target.files[0] });
-    const reader = new FileReader();
-    reader.onload = e => {
-      this.setState({ loadingImage: false, localImage: e.target.result });
-    };
-    reader.readAsDataURL(e.target.files[0]);
+
+  handleFileChange = async e => {
+    const selectedFile = e.target.files[0];
+    this.setState({ uploading: true });
+    const { signedRequest, url } = await apiCall("get", "/api/file-upload", {
+      params: {
+        fileName: selectedFile.name,
+        fileType: selectedFile.type
+      }
+    });
+    await uploadFile(selectedFile, signedRequest);
+    this.setState({ uploading: false, imageUrl: url });
   };
 
   onChange = e => {
@@ -29,49 +34,32 @@ class EditProfile extends React.Component {
   };
 
   saveChanges = async () => {
-    // this.setState({ loading: true });
-
-    const { selectedFile, bio } = this.state;
+    const { imageUrl, bio } = this.state;
     const { username } = this.props.user;
-    const formData = new FormData();
-
-    if (selectedFile)
-      formData.append("imageFile", selectedFile, selectedFile.name);
-    formData.append("bio", bio);
-
-    const res = await apiCall("put", "/api/users/" + username, formData);
+    const res = await apiCall("put", "/api/users/" + username, {
+      imageUrl,
+      bio
+    });
     if (res.image) this.props.updateCurrentUserProfileImage(res.image);
     this.props.history.push("/" + username);
   };
 
   render() {
-    const imageUrl = this.props.user
+    const imageUrl = this.state.imageUrl
+      ? this.state.imageUrl
+      : this.props.user
       ? this.props.user.profile_image_url
         ? this.props.user.profile_image_url
         : "/doge.jpg"
       : "";
 
-    const imageStyle = this.state.loadingImage
+    const imageStyle = this.state.uploading
       ? {}
-      : this.state.localImage
-      ? { backgroundImage: "url('" + this.state.localImage + "')" }
-      : this.props.user
-      ? {
-          backgroundImage: "url('" + imageUrl + "')"
-        }
-      : {};
+      : { backgroundImage: "url('" + imageUrl + "')" };
 
     return (
       <div className="EditProfile">
-        <div
-          className="card"
-          style={{
-            maxWidth: 600,
-            margin: "auto",
-            marginTop: 100,
-            marginBottom: 40
-          }}
-        >
+        <div className="card">
           <div className="card-body">
             <h5 className="card-title" style={{ display: "inline-block" }}>
               Edit your profile
@@ -80,6 +68,7 @@ class EditProfile extends React.Component {
               className="btn btn-sm btn-primary"
               style={{ float: "right" }}
               onClick={this.saveChanges}
+              disabled={this.state.uploading}
             >
               Save Changes
             </button>
@@ -93,7 +82,10 @@ class EditProfile extends React.Component {
                 <div className="selected-file">
                   {this.state.selectedFile && this.state.selectedFile.name}
                 </div>
-                <label htmlFor="image">Change Profile Image</label>
+                <label htmlFor="image">
+                  Change Profile Image
+                  {this.state.uploading && <ButtonSpinner />}
+                </label>
                 <input
                   type="file"
                   className="form-control-file"

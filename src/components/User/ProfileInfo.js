@@ -23,11 +23,11 @@ const ProfileInfo = props => {
         <div className="col-8">
           <div className="username">
             {props.user.username}{" "}
-            {/* {props.ownProfile && (
+            {props.ownProfile && (
               <Link to={props.pathname + "/edit"}>
                 <button className="btn btn-sm ml-3 edit">Edit</button>
               </Link>
-            )} */}
+            )}
           </div>
           <div className="stats">
             <div className="photos">

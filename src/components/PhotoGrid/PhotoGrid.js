@@ -171,6 +171,7 @@ class PhotoGrid extends React.Component {
             onChangeCommentText={this.props.onChangeCommentText}
             addNewComment={this.props.addNewComment}
             loginRequired={this.props.loginRequired}
+            deletePhoto={() => this.props.deletePhoto(selectedPhoto)}
           />
         )}
         {this.state.ready &&

@@ -1,0 +1,60 @@
+.MenuModal .overlay,
+.MenuModal .content {
+  z-index: 10999;
+}
+
+.MenuModal .overlay {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(56, 55, 63, 0.5);
+  overflow-y: auto;
+  display: flex;
+}
+
+.MenuModal .overlay::-webkit-scrollbar {
+  display: none;
+}
+
+.MenuModal .content {
+  background-color: #fff;
+  display: block;
+  flex-basis: 325px;
+  height: 125px;
+  margin: auto;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.MenuModal .content .menu-item {
+  padding: 15px 0;
+  font-size: 14px;
+  cursor: pointer;
+  display: inline-block;
+  margin: auto;
+}
+
+.MenuModal .content .menu-item i.fa-trash {
+  margin-right: 5px;
+  color: #333;
+  font-size: 13px;
+  position: relative;
+  top: -2px;
+}
+
+.MenuModal .content .menu-item.disabled,
+.MenuModal .content .menu-item.disabled i {
+  color: #888;
+  cursor: default;
+}
+
+.MenuModal .content hr {
+  margin: 0;
+}
+
+.MenuModal .content .menu-item.cancel {
+  font-size: 12px;
+  margin-top: 10px;
+}

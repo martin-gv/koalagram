@@ -6,10 +6,6 @@ class Modal extends React.Component {
     this.props.toggle();
   };
 
-  contentClick = e => {
-    e.stopPropagation();
-  };
-
   render() {
     const style = {
       opacity: this.props.show ? 1 : 0,

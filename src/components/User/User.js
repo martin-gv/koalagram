@@ -53,6 +53,7 @@ class User extends React.Component {
           addNewComment={this.props.addNewComment}
           loginRequired={this.props.loginRequired}
           tab={tab}
+          deletePhoto={this.props.deletePhoto}
         />
       </div>
     );

@@ -1,13 +1,14 @@
 import React from "react";
 import { Link, withRouter } from "react-router-dom";
 import moment from "moment";
-
 import "./PhotoModal.css";
 import Modal from "../Shared/Modal";
+import MenuModal from "./MenuModal";
 
 class PhotoModal extends React.Component {
   state = {
-    heartClasses: ["far", "fa-heart"]
+    heartClasses: ["far", "fa-heart"],
+    showMenu: false
   };
 
   onChange = e => {
@@ -41,6 +42,7 @@ class PhotoModal extends React.Component {
   };
 
   commentArea = React.createRef();
+
   onClickCommentIcon = () => {
     if (this.props.currentUser) {
       this.commentArea.current.focus();
@@ -75,7 +77,14 @@ class PhotoModal extends React.Component {
     return formatToUrl.replace("\\", "/");
   };
 
+  openMenu = () => this.setState({ showMenu: true });
+  closeMenu = e => {
+    e.stopPropagation();
+    this.setState({ showMenu: false });
+  };
+
   render() {
+    const { showMenu } = this.state;
     let { photo, userLikes } = this.props;
     const formatToUrl =
       photo && photo.image_url.includes("http")
@@ -113,12 +122,21 @@ class PhotoModal extends React.Component {
                 style={{ backgroundImage: `url("${imageUrl}")` }}
               />
               <div className="sidebar">
+                {showMenu && (
+                  <MenuModal
+                    close={this.closeMenu}
+                    delete={this.props.deletePhoto}
+                    isOwner={
+                      this.props.currentUser &&
+                      this.props.currentUser.id === photo.user_id
+                    }
+                  />
+                )}
+                <i className="fas fa-ellipsis-h" onClick={this.openMenu} />
                 <div className="user">
                   <div
                     className="photo profile"
-                    style={{
-                      backgroundImage: `url("${profileImageUrl}")`
-                    }}
+                    style={{ backgroundImage: `url("${profileImageUrl}")` }}
                     onClick={this.navigateToUserProfile}
                   />
                   <div
@@ -194,21 +212,14 @@ class PhotoModal extends React.Component {
                         onKeyPress={this.handleTextSubmit}
                       />
                       <label>
-                        {!this.props.photo.commentText
-                          ? 0
-                          : this.props.photo.commentText.length}
+                        {(this.props.photo.commentText &&
+                          this.props.photo.commentText.length) ||
+                          0}
                         /255 characters
                       </label>
                       {this.props.photo.commentText &&
                         this.props.photo.commentText.length > 255 && (
-                          <div
-                            className="invalid-feedback"
-                            style={{
-                              display: "block",
-                              fontSize: 13,
-                              fontWeight: "bold"
-                            }}
-                          >
+                          <div className="invalid-feedback">
                             Comment is too long
                           </div>
                         )}

@@ -205,6 +205,12 @@ class App extends Component {
     }));
   };
 
+  deletePhoto = photo => {
+    if (this.state.currentUser && this.state.currentUser.id === photo.user_id) {
+      // api calltodelete photo
+    }
+  };
+
   loginRequired = () => {
     this.setState({ errorMessage: "You must be logged in" });
     this.props.history.push("/login");
@@ -274,6 +280,7 @@ class App extends Component {
                   addNewComment={this.addNewComment}
                   loginRequired={this.loginRequired}
                   readyCallback={() => null}
+                  deletePhoto={this.deletePhoto}
                 />
               )}
             />
@@ -294,6 +301,7 @@ class App extends Component {
                   addNewComment={this.addNewComment}
                   loginRequired={this.loginRequired}
                   switchPhotos={this.switchPhotos}
+                  deletePhoto={this.deletePhoto}
                 />
               )}
             />
@@ -330,6 +338,7 @@ class App extends Component {
                   addNewComment={this.addNewComment}
                   loginRequired={this.loginRequired}
                   readyCallback={() => null}
+                  deletePhoto={this.deletePhoto}
                 />
               )}
             />

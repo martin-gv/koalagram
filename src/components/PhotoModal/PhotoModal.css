@@ -26,6 +26,14 @@
   flex-direction: column;
 }
 
+.PhotoModal .sidebar .fas.fa-ellipsis-h {
+  color: #999;
+  font-size: 16px;
+  align-self: flex-end;
+  position: absolute;
+  cursor: pointer;
+}
+
 .PhotoModal .sidebar hr {
   margin-left: 0;
   margin-right: 0;
@@ -85,6 +93,7 @@
 .PhotoModal .comments-container .comment .hashtag a:hover {
   color: #004c9e;
 }
+
 .PhotoModal .actions-container .icons i {
   font-size: 2.5em;
   margin-right: 0.5em;
@@ -150,6 +159,12 @@
   color: #aaaaaa;
   margin-top: 5px;
   margin-bottom: 0;
+}
+
+.PhotoModal .new-comment .invalid-feedback {
+  display: block;
+  font-size: 13px;
+  font-weight: bold;
 }
 
 .PhotoModal .arrow {

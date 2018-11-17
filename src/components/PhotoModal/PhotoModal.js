@@ -70,14 +70,8 @@ class PhotoModal extends React.Component {
     }
   };
 
-  formatImageUrl = imageUrl => {
-    const formatToUrl = imageUrl.includes("http")
-      ? imageUrl
-      : "http://localhost:8080/" + imageUrl;
-    return formatToUrl.replace("\\", "/");
-  };
-
   openMenu = () => this.setState({ showMenu: true });
+
   closeMenu = e => {
     e.stopPropagation();
     this.setState({ showMenu: false });
@@ -86,11 +80,6 @@ class PhotoModal extends React.Component {
   render() {
     const { showMenu } = this.state;
     let { photo, userLikes } = this.props;
-    const formatToUrl =
-      photo && photo.image_url.includes("http")
-        ? photo.image_url
-        : "http://localhost:8080/" + photo.image_url;
-    const imageUrl = formatToUrl.replace("\\", "/");
     let userLikesThisPhoto =
       photo && Boolean(userLikes.find(x => x.photo_id === photo.id));
     let stateCopy = [...this.state.heartClasses];
@@ -119,7 +108,7 @@ class PhotoModal extends React.Component {
             <div className="modal-container" onClick={this.onClick}>
               <div
                 className="photo"
-                style={{ backgroundImage: `url("${imageUrl}")` }}
+                style={{ backgroundImage: `url("${photo.image_url}")` }}
               />
               <div className="sidebar">
                 {showMenu && (

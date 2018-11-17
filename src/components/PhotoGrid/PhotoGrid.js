@@ -136,6 +136,14 @@ class PhotoGrid extends React.Component {
     return this.props.photos[randNum];
   };
 
+  deleteAndCloseModal = () => {
+    const { selectedPhoto } = this.state;
+    const { currentUser } = this.props;
+    if (currentUser && currentUser.id === selectedPhoto.user_id) {
+      this.props.deletePhoto(selectedPhoto).then(() => this.closeModal());
+    }
+  };
+
   render() {
     let { selectedPhoto } = this.state;
     let { photos } = this.props;
@@ -171,7 +179,7 @@ class PhotoGrid extends React.Component {
             onChangeCommentText={this.props.onChangeCommentText}
             addNewComment={this.props.addNewComment}
             loginRequired={this.props.loginRequired}
-            deletePhoto={() => this.props.deletePhoto(selectedPhoto)}
+            deletePhoto={this.deleteAndCloseModal}
           />
         )}
         {this.state.ready &&

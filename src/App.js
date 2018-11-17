@@ -207,14 +207,21 @@ class App extends Component {
   };
 
   deletePhoto = photo => {
-    const { currentUser } = this.state;
-    if (currentUser && currentUser.id === photo.user_id) {
+    return new Promise(resolve => {
       apiCall("delete", "/api/photos/" + photo.id)
-        .then(res => {
-          console.log(res);
+        .then(() => {
+          const updatedState = this.state.photos.filter(x => x.id !== photo.id);
+          this.setState({ photos: updatedState });
+          resolve();
         })
-        .catch(err => this.setState({ error: err.message }));
-    }
+        .catch(err => {
+          console.log(err.message);
+          this.setState({ error: err.message });
+          // reject() not needed because the component (PhotoGrid) calling this function
+          // doesn't need to handle the error case. The error case is handled in the
+          // current component (App)
+        });
+    });
   };
 
   loginRequired = () => {

@@ -20,7 +20,8 @@ class App extends Component {
     errorMessage: "",
     loginMessage: false,
     storePhotos: [],
-    photosLikedByUser: []
+    photosLikedByUser: [],
+    error: ""
   };
 
   async componentDidMount() {
@@ -206,8 +207,13 @@ class App extends Component {
   };
 
   deletePhoto = photo => {
-    if (this.state.currentUser && this.state.currentUser.id === photo.user_id) {
-      // api calltodelete photo
+    const { currentUser } = this.state;
+    if (currentUser && currentUser.id === photo.user_id) {
+      apiCall("delete", "/api/photos/" + photo.id)
+        .then(res => {
+          console.log(res);
+        })
+        .catch(err => this.setState({ error: err.message }));
     }
   };
 

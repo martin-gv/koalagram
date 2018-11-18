@@ -4,19 +4,24 @@ import { withRouter } from "react-router-dom";
 import "./PhotoGrid.css";
 import PhotoModal from "../PhotoModal/PhotoModal";
 import HashtagHeader from "./HashtagHeader";
+import Loading from "./Loading";
 
 class PhotoGrid extends React.Component {
   state = {
     photoModal: false,
     selectedPhoto: undefined,
-    ready: false
+    ready: false,
+    isLoading: false,
+    noMorePhotos: false
   };
 
   resetComponent = () =>
     this.setState({
       photoModal: false,
       selectedPhoto: undefined,
-      ready: false
+      ready: false,
+      isLoading: false,
+      noMorePhotos: false
     });
 
   async componentDidMount() {
@@ -24,10 +29,11 @@ class PhotoGrid extends React.Component {
     const username = this.props.match.params.username;
     const hashtag = this.props.match.params.hashtag;
     const currentUser = this.props.currentUser;
+    const addToExistingPhotos = false;
 
     const res = hashtag
-      ? await this.props.fetchPhotosByHashtag(hashtag)
-      : await this.props.fetchPhotos(username);
+      ? await this.props.fetchPhotosByHashtag(addToExistingPhotos, hashtag)
+      : await this.props.fetchPhotos(addToExistingPhotos, username);
     if (res) {
       this.setState({ ready: true });
       const id = Number(this.props.location.hash.slice(1));
@@ -37,6 +43,9 @@ class PhotoGrid extends React.Component {
         : undefined;
       if (selectedPhoto) this.setState({ selectedPhoto, photoModal: true });
       this.props.readyCallback();
+      // console.log(res.length);
+      if (!res.photos.length || res.photos.length < 15)
+        this.setState({ noMorePhotos: true });
     }
 
     // get photos liked by user on user's own profile
@@ -44,23 +53,30 @@ class PhotoGrid extends React.Component {
       await this.props.fetchPhotosLikedByUser(username);
     }
 
-    // for keyboard navigation in modal
+    // keyboard navigation in modal
     document.addEventListener("keydown", this.handleKeyDown);
+
+    // infinite scrolling
+    window.addEventListener("scroll", this.onScroll, false);
   }
 
   async componentDidUpdate(prevProps) {
     const username = this.props.match.params.username;
     const hashtag = this.props.match.params.hashtag;
     const currentUser = this.props.currentUser;
+    const addToExistingPhotos = false;
+
     if (this.props.location.pathname !== prevProps.location.pathname) {
       this.resetComponent();
       const res = hashtag
-        ? await this.props.fetchPhotosByHashtag(hashtag)
-        : await this.props.fetchPhotos(username);
+        ? await this.props.fetchPhotosByHashtag(addToExistingPhotos, hashtag)
+        : await this.props.fetchPhotos(addToExistingPhotos, username);
       if (res) {
         this.setState({ ready: true });
         window.scrollTo(0, 0);
         this.props.readyCallback();
+        if (!res.photos.length || res.photos.length < 15)
+          this.setState({ noMorePhotos: true });
       }
 
       // get photos liked by user on user's own profile
@@ -76,6 +92,29 @@ class PhotoGrid extends React.Component {
     )
       await this.props.fetchPhotosLikedByUser(username);
   }
+
+  onScroll = () => {
+    const { isLoading, noMorePhotos } = this.state;
+    const username = this.props.match.params.username;
+    const addToExistingPhotos = true;
+    if (isLoading || noMorePhotos) return;
+    if (
+      window.innerHeight + window.scrollY >=
+      document.body.offsetHeight - 300
+    ) {
+      this.setState({ isLoading: true }, async () => {
+        const hashtag = this.props.match.params.hashtag;
+        const res = hashtag
+          ? await this.props.fetchPhotosByHashtag(addToExistingPhotos, hashtag)
+          : await this.props.fetchPhotos(addToExistingPhotos, username);
+        if (res) {
+          this.setState({ isLoading: false });
+          if (!res.photos.length || res.photos.length < 15)
+            this.setState({ noMorePhotos: true });
+        }
+      });
+    }
+  };
 
   handleKeyDown = e => {
     if (
@@ -196,6 +235,13 @@ class PhotoGrid extends React.Component {
             </h5>
           ))}
         <div className="row photo-grid">{this.state.ready && gridOfPhotos}</div>
+        {!this.state.noMorePhotos && <Loading />}
+        {this.state.noMorePhotos && (
+          <div className="noMorePhotos">
+            <p>That's it! You've reached the end</p>
+            <hr />
+          </div>
+        )}
       </div>
     );
   }

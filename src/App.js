@@ -46,22 +46,38 @@ class App extends Component {
     }
   }
 
-  fetchPhotos = username => {
-    // username is optional
-    return apiCall("get", username ? `/api/users/${username}` : "/api/photos")
+  fetchPhotos = (addToExistingPhotos, username) => {
+    // username argument is optional
+    const offset = addToExistingPhotos ? this.state.photos.length : 0;
+    return apiCall("get", username ? `/api/users/${username}` : "/api/photos", {
+      params: { offset }
+    })
       .then(res => {
         const user = res.user ? { ...res.user[0] } : {};
-        this.setState({ photos: res.photos, user, storePhotos: res.photos });
-        return true;
+        this.setState({
+          photos: addToExistingPhotos
+            ? [...this.state.photos, ...res.photos]
+            : res.photos,
+          user,
+          storePhotos: addToExistingPhotos
+            ? [...this.state.storePhotos, ...res.photos]
+            : res.photos
+        });
+        return res;
       })
       .catch(err => console.log(err));
   };
 
-  fetchPhotosByHashtag = hashtag => {
-    return apiCall("get", "/api/photos/" + hashtag)
+  fetchPhotosByHashtag = (addToExistingPhotos, hashtag) => {
+    const offset = addToExistingPhotos ? this.state.photos.length : 0;
+    return apiCall("get", "/api/photos/" + hashtag, { params: { offset } })
       .then(res => {
-        this.setState({ photos: res.photos });
-        return true;
+        this.setState({
+          photos: addToExistingPhotos
+            ? [...this.state.photos, ...res.photos]
+            : res.photos
+        });
+        return res;
       })
       .catch(err => console.log(err));
   };

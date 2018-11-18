@@ -1,0 +1,46 @@
+.ModalWithMessage .overlay,
+.ModalWithMessage .content {
+  z-index: 11999;
+}
+
+.ModalWithMessage .overlay {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(56, 55, 63, 0.5);
+  overflow-y: auto;
+  display: flex;
+}
+
+.ModalWithMessage .overlay::-webkit-scrollbar {
+  display: none;
+}
+
+.ModalWithMessage .content {
+  background-color: #fff;
+  display: block;
+  flex-basis: 325px;
+  height: 125px;
+  margin: auto;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.ModalWithMessage .content .menu-item {
+  padding: 15px 0;
+  font-size: 14px;
+  display: inline-block;
+  margin: auto;
+}
+
+.ModalWithMessage .content hr {
+  margin: 0;
+}
+
+.ModalWithMessage .content .menu-item.okay {
+  font-size: 12px;
+  margin-top: 10px;
+  cursor: pointer;
+}

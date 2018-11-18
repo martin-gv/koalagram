@@ -10,6 +10,7 @@ import PhotoGrid from "./components/PhotoGrid/PhotoGrid";
 import User from "./components/User/User";
 import { apiCall, setTokenHeader } from "./services/api";
 import EditProfile from "./components/User/EditProfile";
+import ModalWithMessage from "./components/Shared/ModalWithMessage";
 
 class App extends Component {
   state = {
@@ -21,7 +22,8 @@ class App extends Component {
     loginMessage: false,
     storePhotos: [],
     photosLikedByUser: [],
-    error: ""
+    error: "",
+    modalWithMessage: ""
   };
 
   async componentDidMount() {
@@ -211,15 +213,18 @@ class App extends Component {
       apiCall("delete", "/api/photos/" + photo.id)
         .then(() => {
           const updatedState = this.state.photos.filter(x => x.id !== photo.id);
-          this.setState({ photos: updatedState });
+          this.setState({
+            photos: updatedState,
+            modalWithMessage: "Photo deleted successfully"
+          });
           resolve();
         })
         .catch(err => {
           console.log(err.message);
           this.setState({ error: err.message });
-          // reject() not needed because the component (PhotoGrid) calling this function
-          // doesn't need to handle the error case. The error case is handled in the
-          // current component (App)
+          // reject() not needed because the component (PhotoGrid)
+          // calling this function doesn't need to handle the error case.
+          // The error case is handled in the current component (App)
         });
     });
   };
@@ -237,6 +242,10 @@ class App extends Component {
     // to do: clear logged in user message?
   };
 
+  closeModalWithMessage = () => {
+    this.setState({ modalWithMessage: "" });
+  };
+
   render() {
     return (
       <div className="App">
@@ -246,6 +255,12 @@ class App extends Component {
           fetchPhotosByHashtag={this.fetchPhotosByHashtag}
           addNewPhoto={this.addNewPhoto}
         />
+        {this.state.modalWithMessage && (
+          <ModalWithMessage
+            close={this.closeModalWithMessage}
+            message={this.state.modalWithMessage}
+          />
+        )}
         <div className="container">
           {this.state.loginMessage && (
             <LoginMessage

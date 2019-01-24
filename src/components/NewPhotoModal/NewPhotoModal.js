@@ -17,6 +17,7 @@ class NewPhotoModal extends React.Component {
     buttonDisabled: true,
     submitPressed: false
   };
+  
   fileInput = React.createRef();
 
   handleFileChange = async e => {

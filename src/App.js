@@ -125,7 +125,6 @@ class App extends Component {
         this.setState({ errorMessage: "", loginMessage: true });
       })
       .catch(err => {
-        console.log(err);
         if (err.message) {
           this.setState({ errorMessage: err.message });
         }
@@ -177,7 +176,6 @@ class App extends Component {
       photo,
       user: this.state.currentUser
     });
-    console.log(res);
   };
 
   removePhotoLike = async photoID => {
@@ -186,7 +184,6 @@ class App extends Component {
       "delete",
       `/api/likes/${photoID}/user/${currentUser.id}`
     );
-    console.log(res);
   };
 
   onChangeCommentText = (id, e) => {
@@ -215,7 +212,6 @@ class App extends Component {
       userID: currentUser.id,
       comment: photo.commentText
     });
-    console.log(res);
   };
 
   updateCurrentUserProfileImage = image => {

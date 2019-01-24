@@ -7,6 +7,5 @@
     "/api": {
       "origin": "https://koalagram-server.herokuapp.com/api"
     }
-  },
-  "max_body_size": "5m"
+  }
 }

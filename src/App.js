@@ -113,7 +113,7 @@ class App extends Component {
   };
 
   login = loginData => {
-    apiCall("post", "api/auth/login", {
+    apiCall("post", "/api/auth/login", {
       user: loginData
     })
       .then(res => {

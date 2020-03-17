@@ -1,5 +1,12 @@
 import axios from "axios";
 
+// Create React App environment variables are embedded
+// into the final built application. They must be prefixed
+// with REACT_APP_ to be picked up by Create React App. The
+// standard .env file can be overriden with more specific files
+// such as .env.local, .env.production, etc. if necesary.
+const API_SERVER_URL = process.env.REACT_APP_API_SERVER_URL;
+
 export function setTokenHeader(token) {
   if (token) {
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
@@ -9,8 +16,9 @@ export function setTokenHeader(token) {
 }
 
 export function apiCall(method, path, data) {
+  const url = API_SERVER_URL + path;
   return new Promise((resolve, reject) => {
-    return axios[method](path, data)
+    return axios[method](url, data)
       .then(res => {
         return resolve(res.data);
       })
